@@ -1,0 +1,33 @@
+<idea-plugin>
+    <id>com.your.company.unique.plugin.id</id>
+    <name>Find in path profile switcher</name>
+    <version>1.0</version>
+    <vendor email="support@yourcompany.com" url="https://github.com/Fuzy">Fuzy</vendor>
+
+    <description><![CDATA[Find in path profile switcher, profile consists of path, scope, file mask]]></description>
+
+    <change-notes><![CDATA[nothing to see here, wait for it, wait for it...]]>
+    </change-notes>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
+    <idea-version since-build="173.0"/>
+
+    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
+         on how to target different products -->
+    <depends>com.intellij.modules.platform</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <!-- Add your extensions here -->
+    </extensions>
+
+    <actions>
+        <!-- Add your actions here -->
+        <action id="fuzy.FindInPath" class="FindInPathChooseConfigurationAction"
+                text="Find in Path (configurations)" description="Find in Path (shows configurations popup)">
+            <add-to-group group-id="FindMenuGroup" anchor="after" relative-to-action="FindInPath"/>
+            <keyboard-shortcut first-keystroke="control shift alt F" keymap="$default"/>
+        </action>
+
+    </actions>
+
+</idea-plugin>
