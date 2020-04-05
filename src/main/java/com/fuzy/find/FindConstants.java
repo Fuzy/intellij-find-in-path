@@ -11,29 +11,22 @@ public class FindConstants {
     static List<FindByModelAction> createModels() {
         List<FindByModelAction> models = new ArrayList<>();
 
-        FindModel model1 = new FindModel();
-        model1.setFileFilter("pom.xml");
-        model1.setProjectScope(true);
-        FindByModelAction action1 = new FindByModelAction("Maven", model1);
-        models.add(action1);
-
-        FindModel model2 = new FindModel();
-        model2.setFileFilter("*.java");
-        model2.setProjectScope(true);
-        FindByModelAction action2 = new FindByModelAction("Java", model2);
-        models.add(action2);
-
-        FindModel model3 = new FindModel();
-        model3.setFileFilter("*.xml");
-        model3.setProjectScope(true);
-        FindByModelAction action3 = new FindByModelAction("Xml", model3);
-        models.add(action3);
-
-        //TODO validacni nastaveni
-        //TODO lokalizace
-        //TODO create
-        //TODO upgrade n-5?
+        models.add(createAction("Java", "*.java"));
+        models.add(createAction("Xml", "*.xml"));
+        models.add(createAction("Maven", "pom.xml"));
+        models.add(createAction("L10n cz", "*cs.xml"));
+        models.add(createAction("L10n others", "lang.*.xml,!lang.*cs.xml"));
+        models.add(createAction("V8n", "val*.xml"));
+        models.add(createAction("SQL create", "create*.sql"));
+        models.add(createAction("SQL upgrade", "upgrade11**.sql"));
 
         return models;
+    }
+
+    private static FindByModelAction createAction(String name, String fileFilter) {
+        FindModel model2 = new FindModel();
+        model2.setFileFilter(fileFilter);
+        model2.setProjectScope(true);
+        return new FindByModelAction(name, model2);
     }
 }

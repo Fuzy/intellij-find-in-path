@@ -40,18 +40,18 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
         List<FindByModelAction> findActions = FindConstants.createModels();
         List<AnAction> actions = new ArrayList<>();
 
+        actions.add(new FindInPathProfileAction(project, defaultFindModel, "default"));
+
         for (FindByModelAction findAction : findActions) {
             FindInPathProfileAction action = new FindInPathProfileAction(project, findAction.getModel(), findAction.getName());
             actions.add(action);
         }
 
-        actions.add(new FindInPathProfileAction(project, defaultFindModel, "default"));
-
         showPopup(dataContext, actions);
     }
 
     private void showPopup(DataContext context, List<AnAction> applicable) {
-        JBPopupFactory.ActionSelectionAid mnemonics = JBPopupFactory.ActionSelectionAid.MNEMONICS;
+        JBPopupFactory.ActionSelectionAid mnemonics = JBPopupFactory.ActionSelectionAid.NUMBERING;
         DefaultActionGroup group = new DefaultActionGroup(applicable.toArray(AnAction.EMPTY_ARRAY));
         JBPopupFactory.getInstance().createActionGroupPopup(TITLE, group, context, mnemonics, true).showInFocusCenter();
     }

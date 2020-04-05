@@ -22,7 +22,7 @@
 
     <actions>
         <!-- Add your actions here -->
-        <action id="fuzy.FindInPath" class="FindInPathChooseConfigurationAction"
+        <action id="fuzy.FindInPath" class="com.fuzy.find.FindInPathChooseConfigurationAction"
                 text="Find in Path (configurations)" description="Find in Path (shows configurations popup)">
             <add-to-group group-id="FindMenuGroup" anchor="after" relative-to-action="FindInPath"/>
             <keyboard-shortcut first-keystroke="control shift alt F" keymap="$default"/>
