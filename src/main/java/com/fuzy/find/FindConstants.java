@@ -19,6 +19,7 @@ public class FindConstants {
         models.add(createAction("V8n", "val*.xml"));
         models.add(createAction("SQL create", "create*.sql"));
         models.add(createAction("SQL upgrade", "upgrade11**.sql"));
+        models.add(createAction("SQL other", "*.sql,!create*.sql,!upgrade*.sql"));
 
         return models;
     }

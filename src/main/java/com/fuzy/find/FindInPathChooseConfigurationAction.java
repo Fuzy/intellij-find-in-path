@@ -13,6 +13,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
@@ -24,6 +25,15 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
     public void actionPerformed(@NotNull AnActionEvent e) {
         DataContext dataContext = e.getDataContext();
         Project project = e.getData(CommonDataKeys.PROJECT);
+        Editor editor = e.getData(CommonDataKeys.EDITOR);
+
+        String stringToFind = null;
+        if (editor != null) {
+            stringToFind = editor.getSelectionModel().getSelectedText();
+        }
+        if (stringToFind == null) {
+            stringToFind = "";
+        }
 
         if (project == null) {
             return;
@@ -43,7 +53,9 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
         actions.add(new FindInPathProfileAction(project, defaultFindModel, "default"));
 
         for (FindByModelAction findAction : findActions) {
-            FindInPathProfileAction action = new FindInPathProfileAction(project, findAction.getModel(), findAction.getName());
+            FindModel model = findAction.getModel();
+            model.setStringToFind(stringToFind);
+            FindInPathProfileAction action = new FindInPathProfileAction(project, model, findAction.getName());
             actions.add(action);
         }
 
