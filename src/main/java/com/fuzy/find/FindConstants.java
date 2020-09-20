@@ -2,13 +2,34 @@ package com.fuzy.find;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
+import com.fuzy.find.persistence.FindOption;
+import com.fuzy.find.persistence.FindOptions;
 import com.intellij.find.FindModel;
+import com.intellij.openapi.components.ServiceManager;
+import com.intellij.openapi.project.Project;
 
-//TODO replace by XML
 public class FindConstants {
 
-    static List<FindByModelAction> createModels() {
+    public List<FindByModelAction> createModels(Project project) {
+        List<FindByModelAction> actions = new ArrayList<>();
+
+        ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
+        FindOptions state = manager.getState();
+        if (state != null) {
+
+            List<FindOption> options = state.getOptions();
+            actions.addAll(options.stream().map(f ->
+                createAction(f.getName(), f.getFileFilter()))
+                .collect(Collectors.toList()));
+        }
+
+        return actions;
+    }
+
+    static List<FindByModelAction> createModelsDeprecated() {
         List<FindByModelAction> models = new ArrayList<>();
 
         models.add(createAction("Java", "*.java"));
@@ -25,9 +46,9 @@ public class FindConstants {
     }
 
     private static FindByModelAction createAction(String name, String fileFilter) {
-        FindModel model2 = new FindModel();
-        model2.setFileFilter(fileFilter);
-        model2.setProjectScope(true);
-        return new FindByModelAction(name, model2);
+        FindModel model = new FindModel();
+        model.setFileFilter(fileFilter);
+        model.setProjectScope(true);
+        return new FindByModelAction(UUID.randomUUID().toString(), name, model);
     }
 }

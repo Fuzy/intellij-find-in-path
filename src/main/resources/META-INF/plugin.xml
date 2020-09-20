@@ -1,29 +1,33 @@
-<idea-plugin>
-    <id>com.your.company.unique.plugin.id</id>
-    <name>Find in path profile switcher</name>
+<idea-plugin require-restart="false">
+    <id>com.fuzy.find.in.path</id>
+    <name>Find In Path (Options Chooser)</name>
     <version>1.0</version>
-    <vendor email="support@yourcompany.com" url="https://github.com/Fuzy">Fuzy</vendor>
+    <vendor email="martinkadlecmarket@gmail.com" url="https://github.com/Fuzy">Fuzy</vendor>
 
     <description><![CDATA[Find in path profile switcher, profile consists of path, scope, file mask]]></description>
 
-    <change-notes><![CDATA[nothing to see here, wait for it, wait for it...]]>
+    <change-notes><![CDATA[Plugin initial release, I hope it will improve your productivity]]>
     </change-notes>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-    <idea-version since-build="173.0"/>
+    <idea-version since-build="201.0"/>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
+    <!-- Messaging, UI Themes, UI Components, Files, Documents, Actions, Components, Services, Extensions, Editors -->
     <depends>com.intellij.modules.platform</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
+
+        <!-- Declare the application level service -->
+        <projectService serviceImplementation="com.fuzy.find.ConfigurationManager"/>
     </extensions>
 
     <actions>
         <!-- Add your actions here -->
         <action id="fuzy.FindInPath" class="com.fuzy.find.FindInPathChooseConfigurationAction"
-                text="Find in Path (configurations)" description="Find in Path (shows configurations popup)">
+                text="Find in Path (Configurations)" description="Find in Path (shows configurations popup)">
             <add-to-group group-id="FindMenuGroup" anchor="after" relative-to-action="FindInPath"/>
             <keyboard-shortcut first-keystroke="control shift alt F" keymap="$default"/>
         </action>
