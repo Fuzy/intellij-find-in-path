@@ -15,13 +15,15 @@ public class FindOption {
 
     public int cntUsed;
 
-    //com.intellij.find.FindModel.SearchContext
-    //match case (boolean)
-    //words (boolean
-    //regex (boolean)
+    public String searchContext;
+
+    public boolean caseSensitive;
+
+    public boolean wholeWordsOnly;
+
+    public boolean regularExpressions;
 
     //TODO scope
-
 
     public String getUuid() {
         return uuid;
@@ -61,6 +63,38 @@ public class FindOption {
 
     public void setCntUsed(int cntUsed) {
         this.cntUsed = cntUsed;
+    }
+
+    public String getSearchContext() {
+        return searchContext;
+    }
+
+    public void setSearchContext(String searchContext) {
+        this.searchContext = searchContext;
+    }
+
+    public boolean isCaseSensitive() {
+        return caseSensitive;
+    }
+
+    public void setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive;
+    }
+
+    public boolean isWholeWordsOnly() {
+        return wholeWordsOnly;
+    }
+
+    public void setWholeWordsOnly(boolean wholeWordsOnly) {
+        this.wholeWordsOnly = wholeWordsOnly;
+    }
+
+    public boolean isRegularExpressions() {
+        return regularExpressions;
+    }
+
+    public void setRegularExpressions(boolean regularExpressions) {
+        this.regularExpressions = regularExpressions;
     }
 
     @Override

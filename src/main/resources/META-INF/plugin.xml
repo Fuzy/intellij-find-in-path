@@ -21,12 +21,12 @@
         <!-- Add your extensions here -->
 
         <!-- Declare the application level service -->
-        <projectService serviceImplementation="com.fuzy.find.ConfigurationManager"/>
+        <projectService serviceImplementation="com.fuzy.find.persistence.ConfigurationManager"/>
     </extensions>
 
     <actions>
         <!-- Add your actions here -->
-        <action id="fuzy.FindInPath" class="com.fuzy.find.FindInPathChooseConfigurationAction"
+        <action id="fuzy.FindInPath" class="com.fuzy.find.action.FindInPathChooseConfigurationAction"
                 text="Find in Path (Configurations)" description="Find in Path (shows configurations popup)">
             <add-to-group group-id="FindMenuGroup" anchor="after" relative-to-action="FindInPath"/>
             <keyboard-shortcut first-keystroke="control shift alt F" keymap="$default"/>

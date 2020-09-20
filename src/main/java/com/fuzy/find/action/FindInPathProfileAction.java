@@ -1,4 +1,4 @@
-package com.fuzy.find;
+package com.fuzy.find.action;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -7,6 +7,7 @@ import javax.swing.SwingUtilities;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.fuzy.find.persistence.ConfigurationManager;
 import com.fuzy.find.persistence.FindOption;
 import com.fuzy.find.persistence.FindOptions;
 import com.intellij.find.FindManager;
@@ -21,6 +22,7 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.wm.ToolWindowId;
 
 public class FindInPathProfileAction extends AnAction implements DumbAware {
@@ -71,10 +73,15 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
                     FindInProjectManager findInProjectManager = FindInProjectManager.getInstance(project);
                     FindInProjectUtil.setDirectoryName(model, dataContext);
                     findInProjectManager.findInPath(model);
+
+                    //TODO pokud se nastaveni zmenilo od ulozeneho zeptat se novy/prepsat - ale az v notifikace
+                    String s = Messages.showInputDialog(project, "Save search options", "Save Options", null);
+                    if (s != null) {
+                        updateFindOptionByModel(findOption, s);
+                    }
                 });
             });
 
-            //TODO ask for name
 
         } catch (Throwable ex) {
             NOTIFICATION_GROUP.createNotification(String.valueOf(ex.getMessage()), NotificationType.WARNING).notify(project);
@@ -85,10 +92,18 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
         if (findOption.getUuid() == null || findOption.getUuid().isBlank()) {
             findOption.setUuid(UUID.randomUUID().toString());
         }
-        findOption.setName("");//TODO
+
         findOption.setLastUsed(LocalDateTime.now());
         findOption.setCntUsed(findOption.getCntUsed() + 1);
         findOption.setFileFilter(model.getFileFilter());
+        findOption.setCaseSensitive(model.isCaseSensitive());
+        findOption.setRegularExpressions(model.isRegularExpressions());
+        findOption.setWholeWordsOnly(model.isWholeWordsOnly());
+        findOption.setSearchContext(model.getSearchContext().name());
+    }
+
+    private void updateFindOptionByModel(FindOption findOption, String name) {
+        findOption.setName(name);
     }
 
 }

@@ -1,11 +1,9 @@
-package com.fuzy.find;
+package com.fuzy.find.persistence;
 
 import java.util.Optional;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.fuzy.find.persistence.FindOption;
-import com.fuzy.find.persistence.FindOptions;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
