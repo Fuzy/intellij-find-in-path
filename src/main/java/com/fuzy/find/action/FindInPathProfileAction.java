@@ -25,9 +25,9 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.wm.ToolWindowId;
 
-public class FindInPathProfileAction extends AnAction implements DumbAware {
+import static com.fuzy.find.notification.Notifications.NOTIFICATION_GROUP;
 
-    public static final NotificationGroup NOTIFICATION_GROUP = NotificationGroup.toolWindowGroup("Find in Path (conf)", ToolWindowId.FIND, false);
+public class FindInPathProfileAction extends AnAction implements DumbAware {
 
     private final Project project;
     private final FindModel model;
@@ -74,6 +74,8 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
                     FindInProjectUtil.setDirectoryName(model, dataContext);
                     findInProjectManager.findInPath(model);
 
+                    //TODO pouzit odkaz na dialog v notifikacnim okne
+                    //TODO pokud neulozi nazev znamena to ze to ulozit nechce
                     //TODO pokud se nastaveni zmenilo od ulozeneho zeptat se novy/prepsat - ale az v notifikace
                     String s = Messages.showInputDialog(project, "Save search options", "Save Options", null);
                     if (s != null) {

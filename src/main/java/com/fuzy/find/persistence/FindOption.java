@@ -23,8 +23,6 @@ public class FindOption {
 
     public boolean regularExpressions;
 
-    //TODO scope
-
     public String getUuid() {
         return uuid;
     }

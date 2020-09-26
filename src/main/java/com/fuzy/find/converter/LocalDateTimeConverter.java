@@ -4,11 +4,13 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import org.jetbrains.annotations.Nullable;
+
 import com.intellij.util.xmlb.Converter;
 
 public class LocalDateTimeConverter extends Converter<LocalDateTime> {
 
-    public LocalDateTime fromString(String value) {
+    public LocalDateTime fromString(@Nullable String value) {
         if (value == null) {
             return null;
         }

@@ -7,8 +7,8 @@ import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
-import model.FindByModelAction;
-import model.FindConstants;
+import com.fuzy.find.model.FindByModelAction;
+import com.fuzy.find.model.FindConstants;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
 import com.intellij.find.findInProject.FindInProjectManager;
@@ -23,7 +23,7 @@ import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 
-import static com.fuzy.find.action.FindInPathProfileAction.NOTIFICATION_GROUP;
+import static com.fuzy.find.notification.Notifications.NOTIFICATION_GROUP;
 
 public class FindInPathChooseConfigurationAction extends AnAction implements DumbAware {
 

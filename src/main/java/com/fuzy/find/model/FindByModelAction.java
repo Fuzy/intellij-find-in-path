@@ -1,4 +1,4 @@
-package model;
+package com.fuzy.find.model;
 
 import com.intellij.find.FindModel;
 

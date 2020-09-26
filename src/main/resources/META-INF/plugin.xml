@@ -34,4 +34,9 @@
 
     </actions>
 
+    <projectListeners>
+        <listener class="com.fuzy.find.listener.MyToolWindowManagerListener"
+                  topic="com.intellij.openapi.wm.ex.ToolWindowManagerListener"/>
+    </projectListeners>
+
 </idea-plugin>
