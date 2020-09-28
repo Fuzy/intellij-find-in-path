@@ -59,12 +59,12 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
             List<FindByModelAction> findActions = new FindConstants().createModels(project);
             List<AnAction> actions = new ArrayList<>();
 
-            actions.add(new FindInPathProfileAction(project, defaultFindModel, "default", "default"));
+            actions.add(new FindInPathProfileAction(project, defaultFindModel, "default"));
 
             for (FindByModelAction findAction : findActions) {
                 FindModel model = findAction.getModel();
                 model.setStringToFind(stringToFind);
-                FindInPathProfileAction action = new FindInPathProfileAction(project, model, findAction.getName(), findAction.getUuid());
+                FindInPathProfileAction action = new FindInPathProfileAction(project, model, findAction.getName());
                 actions.add(action);
             }
 

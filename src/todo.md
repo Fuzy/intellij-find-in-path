@@ -1,14 +1,18 @@
 ###TODO
 
 Ukladani nastaveni
-- moznost vyvolat akci z notifikace
-- slo by reagovat na pouziti standartni akce?
+- novy
+- prejmenovat
 
-Pred zverejnenim
-- vynikajici manual
-- ikona
-
-1.1
+Funkce
 - ukládat scope hledání
 - řazení dle posledního použití
 - řazení dle abecedy
+
+Pred zverejnenim
+- vynikajici manual
+- zmena hesla na martinkadlecmarketplace
+
+Dokumentace
+- video navod
+- kde je ulozeno nastaveni

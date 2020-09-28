@@ -1,6 +1,6 @@
 <idea-plugin require-restart="false">
     <id>com.fuzy.find.in.path</id>
-    <name>Find In Path (Options Chooser)</name>
+    <name>Find In Path (Saved Configurations)</name>
     <version>1.0</version>
     <vendor email="martinkadlecmarket@gmail.com" url="https://github.com/Fuzy">Fuzy</vendor>
 
@@ -35,7 +35,7 @@
     </actions>
 
     <projectListeners>
-        <listener class="com.fuzy.find.listener.MyToolWindowManagerListener"
+        <listener class="com.fuzy.find.listener.FindWindowManagerListener"
                   topic="com.intellij.openapi.wm.ex.ToolWindowManagerListener"/>
     </projectListeners>
 
