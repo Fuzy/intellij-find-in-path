@@ -4,16 +4,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
-import javax.swing.SwingUtilities;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.fuzy.find.model.FindByModelAction;
 import com.fuzy.find.model.FindConstants;
+import com.fuzy.find.persistence.ConfigurationManager;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
 import com.intellij.find.findInProject.FindInProjectManager;
@@ -29,7 +30,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
-import com.intellij.ui.popup.PopupFactoryImpl;
+import com.intellij.ui.popup.list.ListPopupImpl;
 
 import static com.fuzy.find.notification.Notifications.NOTIFICATION_GROUP;
 
@@ -65,18 +66,18 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
             FindModel defaultFindModel = findManager.getFindInProjectModel().clone();
 
             List<FindByModelAction> findActions = new FindConstants().createModels(project);
-            List<AnAction> actions = new ArrayList<>();
+            List<FindInPathProfileAction> actions = new ArrayList<>();
 
-            actions.add(new FindInPathProfileAction(project, defaultFindModel, "default"));
+            actions.add(new FindInPathProfileAction(project, defaultFindModel, "default", "default"));
 
             for (FindByModelAction findAction : findActions) {
                 FindModel model = findAction.getModel();
                 model.setStringToFind(stringToFind);
-                FindInPathProfileAction action = new FindInPathProfileAction(project, model, findAction.getName());
+                FindInPathProfileAction action = new FindInPathProfileAction(project, model, findAction.getUuid(), findAction.getName());
                 actions.add(action);
             }
 
-            showPopup(dataContext, actions);
+            showPopup(dataContext, actions, project);
         } catch (Throwable ex) {
             StringWriter sw = new StringWriter();
             PrintWriter pw = new PrintWriter(sw);
@@ -87,41 +88,48 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
         }
     }
 
-    private void showPopup(DataContext context, List<AnAction> applicable) {
-        DeleteAction delete = new DeleteAction();
-
+    private void showPopup(DataContext context, List<FindInPathProfileAction> applicable, Project project) {
 
         JBPopupFactory.ActionSelectionAid mnemonics = JBPopupFactory.ActionSelectionAid.ALPHA_NUMBERING;
         DefaultActionGroup group = new DefaultActionGroup(applicable.toArray(AnAction.EMPTY_ARRAY));
         ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(TITLE, group, context, mnemonics, true);
-        if (popup instanceof PopupFactoryImpl.ActionGroupPopup) {
-            delete.setPopup((PopupFactoryImpl.ActionGroupPopup) popup);
-            ((PopupFactoryImpl.ActionGroupPopup) popup).registerAction("delete", KeyEvent.VK_DELETE, 0, delete);
+        if (popup instanceof ListPopupImpl) {
+            ListPopupImpl listPopup = (ListPopupImpl) popup;
+
+            AbstractAction deleteOptions = createDeleteAction(applicable, project, listPopup);
+            listPopup.registerAction("delete", KeyEvent.VK_DELETE, 0, deleteOptions);
+
         }
         popup.showInFocusCenter();
     }
 
-    private static class DeleteAction extends AbstractAction {
-        PopupFactoryImpl.ActionGroupPopup popup;
+    @NotNull
+    private AbstractAction createDeleteAction(List<FindInPathProfileAction> applicable, Project project, ListPopupImpl listPopup) {
+        return new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedIndex = listPopup.getList().getSelectedIndex();
 
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            //TODO zavrit, smazat, pote zobrazit znovu
-            SwingUtilities.invokeLater(() -> {
-                popup.setUiVisible(false);
-                Object selectedValue = popup.getList().getSelectedValue();
-                int selectedIndex = popup.getList().getSelectedIndex();
-                int i = Messages.showYesNoCancelDialog("Save search options as "
-                    + selectedIndex + " " + selectedValue, "Delete Options", null);
-                popup.setUiVisible(true);
-                popup.getList().setSelectedIndex(0);
-            });
-        }
+                //hide
+                listPopup.dispose();
 
-        public void setPopup(PopupFactoryImpl.ActionGroupPopup popup) {
-            this.popup = popup;
-        }
+                FindInPathProfileAction findInPathProfileAction = applicable.get(selectedIndex);
+                if (findInPathProfileAction == null) {
+                    return;
+                }
 
+                String name = findInPathProfileAction.getName();
+                String question = MessageFormat.format("Delete search options named  {0}?",
+                    name);
+
+                int i = Messages.showYesNoCancelDialog(question, "Delete Options", null);
+                if (Messages.YES == i) {
+                    ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
+                    configurationManager.delete(findInPathProfileAction.getUuid());
+                }
+            }
+
+        };
     }
 
 }

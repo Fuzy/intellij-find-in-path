@@ -1,14 +1,10 @@
 package com.fuzy.find.listener;
 
 import java.text.MessageFormat;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.fuzy.find.persistence.ConfigurationManager;
-import com.fuzy.find.persistence.FindOption;
-import com.fuzy.find.persistence.FindOptions;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
 import com.intellij.notification.NotificationType;
@@ -27,7 +23,6 @@ import static com.fuzy.find.notification.Notifications.NOTIFICATION_GROUP;
  */
 public class FindWindowManagerListener implements ToolWindowManagerListener {
     private final Project project;
-    private FindModel findModel;
 
     public FindWindowManagerListener(Project project) {
         this.project = project;
@@ -46,7 +41,6 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
         if (currentFindModel == null) {
             return;
         }
-        findModel = currentFindModel;
 
         // no previous search
         String content = currentFindModel.getStringToFind();
@@ -59,60 +53,29 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
         //TODO 1. existuje ulozene nastaveni se stejnymi parametry - zadny dialog
         //TODO 2. pouzil jsem hledani s novym nastavenim - dotaz zda ulozit
 
-        AnAction saveAction = createSaveAction();
+        AnAction saveAction = createSaveAction(currentFindModel);
 
         NOTIFICATION_GROUP.createNotification(question, NotificationType.INFORMATION)
             .addAction(saveAction).notify(project);
     }
 
     @NotNull
-    private AnAction createSaveAction() {
+    private AnAction createSaveAction(FindModel currentFindModel) {
         return new AnAction("Save") {
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
                 String name = Messages.showInputDialog(project, "Save search options as", "Save Options", null);
                 if (name != null) {
-                    saveFindOption(name);
+                    saveFindOption(currentFindModel, name);
                 }
             }
         };
     }
 
-    private void saveFindOption(String name) {
+    private void saveFindOption(FindModel currentFindModel, String name) {
         ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
-        FindOptions findOptions = configurationManager.getState();
-
-        if (findOptions == null) {
-            findOptions = new FindOptions();
-        }
-        configurationManager.setState(findOptions);
-
-        FindOption findOption = new FindOption();
-        updateFindOptionByModel(findOption, findModel);
-        updateFindOptionByName(findOption, name);
-        findOptions.getOptions().add(findOption);
+        configurationManager.save(currentFindModel, name);
     }
-
-    private void updateFindOptionByModel(FindOption findOption, FindModel model) {
-        findOption.setUuid(UUID.randomUUID().toString());
-        findOption.setFileFilter(model.getFileFilter());
-        findOption.setCaseSensitive(model.isCaseSensitive());
-        findOption.setRegularExpressions(model.isRegularExpressions());
-        findOption.setWholeWordsOnly(model.isWholeWordsOnly());
-        findOption.setSearchContext(model.getSearchContext().name());
-
-        updateUsageProperties(findOption);
-    }
-
-    private void updateFindOptionByName(FindOption findOption, String name) {
-        findOption.setName(name);
-    }
-
-    private void updateUsageProperties(FindOption findOption) {
-        findOption.setLastUsed(LocalDateTime.now());
-        findOption.setCntUsed(findOption.getCntUsed() + 1);
-    }
-
 
     //com.intellij.psi.search.PredefinedSearchScopeProvider.getPredefinedScopes
     //NamedScopeManager.getInstance(project); workspace.xml

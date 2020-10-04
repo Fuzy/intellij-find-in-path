@@ -23,11 +23,15 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
 
     private final Project project;
     private final FindModel model;
+    private final String uuid;
+    private final String name;
 
-    public FindInPathProfileAction(Project project, FindModel model, String name) {
+    public FindInPathProfileAction(Project project, FindModel model, String uuid, String name) {
         super(name);
         this.project = project;
         this.model = model;
+        this.uuid = uuid;
+        this.name = name;
     }
 
     @Override
@@ -55,4 +59,11 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
         });
     }
 
+    public String getUuid() {
+        return uuid;
+    }
+
+    public String getName() {
+        return name;
+    }
 }
