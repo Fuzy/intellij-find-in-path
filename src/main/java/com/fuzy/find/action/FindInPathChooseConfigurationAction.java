@@ -1,9 +1,14 @@
 package com.fuzy.find.action;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.swing.AbstractAction;
+import javax.swing.SwingUtilities;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,7 +26,10 @@ import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
+import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.ui.popup.PopupFactoryImpl;
 
 import static com.fuzy.find.notification.Notifications.NOTIFICATION_GROUP;
 
@@ -80,10 +88,40 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
     }
 
     private void showPopup(DataContext context, List<AnAction> applicable) {
-        JBPopupFactory.ActionSelectionAid mnemonics = JBPopupFactory.ActionSelectionAid.NUMBERING;
+        DeleteAction delete = new DeleteAction();
+
+
+        JBPopupFactory.ActionSelectionAid mnemonics = JBPopupFactory.ActionSelectionAid.ALPHA_NUMBERING;
         DefaultActionGroup group = new DefaultActionGroup(applicable.toArray(AnAction.EMPTY_ARRAY));
-        JBPopupFactory.getInstance().createActionGroupPopup(TITLE, group, context, mnemonics, true).showInFocusCenter();
+        ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(TITLE, group, context, mnemonics, true);
+        if (popup instanceof PopupFactoryImpl.ActionGroupPopup) {
+            delete.setPopup((PopupFactoryImpl.ActionGroupPopup) popup);
+            ((PopupFactoryImpl.ActionGroupPopup) popup).registerAction("delete", KeyEvent.VK_DELETE, 0, delete);
+        }
+        popup.showInFocusCenter();
     }
 
+    private static class DeleteAction extends AbstractAction {
+        PopupFactoryImpl.ActionGroupPopup popup;
+
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            //TODO zavrit, smazat, pote zobrazit znovu
+            SwingUtilities.invokeLater(() -> {
+                popup.setUiVisible(false);
+                Object selectedValue = popup.getList().getSelectedValue();
+                int selectedIndex = popup.getList().getSelectedIndex();
+                int i = Messages.showYesNoCancelDialog("Save search options as "
+                    + selectedIndex + " " + selectedValue, "Delete Options", null);
+                popup.setUiVisible(true);
+                popup.getList().setSelectedIndex(0);
+            });
+        }
+
+        public void setPopup(PopupFactoryImpl.ActionGroupPopup popup) {
+            this.popup = popup;
+        }
+
+    }
 
 }

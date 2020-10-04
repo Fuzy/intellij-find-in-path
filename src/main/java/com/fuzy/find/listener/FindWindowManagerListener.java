@@ -22,6 +22,9 @@ import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
 
 import static com.fuzy.find.notification.Notifications.NOTIFICATION_GROUP;
 
+/**
+ * After Find window is showed, it will evaluate whether to ask to save/update/delete settings.
+ */
 public class FindWindowManagerListener implements ToolWindowManagerListener {
     private final Project project;
     private FindModel findModel;
@@ -37,6 +40,7 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
             return;
         }
 
+        // last used search
         final FindManager findManager = FindManager.getInstance(project);
         FindModel currentFindModel = findManager.getFindInProjectModel().clone();
         if (currentFindModel == null) {
@@ -44,15 +48,18 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
         }
         findModel = currentFindModel;
 
+        // no previous search
         String content = currentFindModel.getStringToFind();
-        String question = MessageFormat.format("Do you want save search options used in search for {0}?",
+        if (content.isEmpty()) {
+            return;
+        }
+        String question = MessageFormat.format("Do you want to save search options used in search for {0}?",
             content);
 
-        //TODO porovnat s ulozenymi
+        //TODO 1. existuje ulozene nastaveni se stejnymi parametry - zadny dialog
+        //TODO 2. pouzil jsem hledani s novym nastavenim - dotaz zda ulozit
 
         AnAction saveAction = createSaveAction();
-        //Save as | Update existing (only if exists, only if changed)
-        //Delete
 
         NOTIFICATION_GROUP.createNotification(question, NotificationType.INFORMATION)
             .addAction(saveAction).notify(project);
@@ -106,4 +113,7 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
         findOption.setCntUsed(findOption.getCntUsed() + 1);
     }
 
+
+    //com.intellij.psi.search.PredefinedSearchScopeProvider.getPredefinedScopes
+    //NamedScopeManager.getInstance(project); workspace.xml
 }
