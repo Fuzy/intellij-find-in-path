@@ -2,8 +2,6 @@ package com.fuzy.find.action;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +11,12 @@ import javax.swing.AbstractAction;
 import org.jetbrains.annotations.NotNull;
 
 import com.fuzy.find.model.FindByModelAction;
-import com.fuzy.find.model.FindConstants;
+import com.fuzy.find.model.FindUtils;
+import com.fuzy.find.notification.Notifications;
 import com.fuzy.find.persistence.ConfigurationManager;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
 import com.intellij.find.findInProject.FindInProjectManager;
-import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -31,8 +29,6 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
 import com.intellij.ui.popup.list.ListPopupImpl;
-
-import static com.fuzy.find.notification.Notifications.NOTIFICATION_GROUP;
 
 public class FindInPathChooseConfigurationAction extends AnAction implements DumbAware {
 
@@ -65,7 +61,7 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
             final FindManager findManager = FindManager.getInstance(project);
             FindModel defaultFindModel = findManager.getFindInProjectModel().clone();
 
-            List<FindByModelAction> findActions = new FindConstants().createModels(project);
+            List<FindByModelAction> findActions = new FindUtils().createModels(project);
             List<FindInPathProfileAction> actions = new ArrayList<>();
 
             actions.add(new FindInPathProfileAction(project, defaultFindModel, "default", "default"));
@@ -79,12 +75,7 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
 
             showPopup(dataContext, actions, project);
         } catch (Throwable ex) {
-            StringWriter sw = new StringWriter();
-            PrintWriter pw = new PrintWriter(sw);
-            ex.printStackTrace(pw);
-            String sStackTrace = sw.toString(); // stack trace as a string
-
-            NOTIFICATION_GROUP.createNotification(String.valueOf(sStackTrace), NotificationType.WARNING).notify(project);
+            Notifications.notifyError(ex, project);
         }
     }
 

@@ -1,27 +1,32 @@
 package com.fuzy.find.persistence;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 import com.fuzy.find.converter.LocalDateTimeConverter;
 import com.intellij.util.xmlb.annotations.OptionTag;
 
 public class FindOption {
-    public String uuid;
-    public String name;
-    public String fileFilter;
+    private String uuid;
+    private String name;
+    private String fileFilter;
 
     @OptionTag(converter = LocalDateTimeConverter.class)
-    public LocalDateTime lastUsed;
+    private LocalDateTime lastUsed;
 
-    public int cntUsed;
+    private int cntUsed;
 
-    public String searchContext;
+    private String searchContext;
 
-    public boolean caseSensitive;
+    private boolean caseSensitive;
 
-    public boolean wholeWordsOnly;
+    private boolean wholeWordsOnly;
 
-    public boolean regularExpressions;
+    private boolean regularExpressions;
+    private String moduleName;
+    private String directoryName;
+    private boolean customScope;
+    private boolean projectScope;
 
     public String getUuid() {
         return uuid;
@@ -95,13 +100,80 @@ public class FindOption {
         this.regularExpressions = regularExpressions;
     }
 
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(String moduleName) {
+        this.moduleName = moduleName;
+    }
+
+    public void setDirectoryName(String directoryName) {
+        this.directoryName = directoryName;
+    }
+
+    public String getDirectoryName() {
+        return directoryName;
+    }
+
+    public void setCustomScope(boolean customScope) {
+        this.customScope = customScope;
+    }
+
+    public boolean isCustomScope() {
+        return customScope;
+    }
+
+    public void setProjectScope(boolean projectScope) {
+        this.projectScope = projectScope;
+    }
+
+    public boolean isProjectScope() {
+        return projectScope;
+    }
+
+    //TODO
+
+    //com.intellij.psi.search.PredefinedSearchScopeProvider.getPredefinedScopes
+    //NamedScopeManager.getInstance(project); workspace.xml
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        FindOption that = (FindOption) o;
+        return caseSensitive == that.caseSensitive &&
+            wholeWordsOnly == that.wholeWordsOnly &&
+            regularExpressions == that.regularExpressions &&
+            customScope == that.customScope &&
+            projectScope == that.projectScope &&
+            Objects.equals(fileFilter, that.fileFilter) &&
+            Objects.equals(searchContext, that.searchContext) &&
+            Objects.equals(moduleName, that.moduleName) &&
+            Objects.equals(directoryName, that.directoryName);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fileFilter, searchContext, caseSensitive, wholeWordsOnly, regularExpressions, moduleName, directoryName, customScope, projectScope);
+    }
+
     @Override
     public String toString() {
         return "FindOption{" +
-            "name='" + name + '\'' +
+            "uuid='" + uuid + '\'' +
+            ", name='" + name + '\'' +
             ", fileFilter='" + fileFilter + '\'' +
             ", lastUsed=" + lastUsed +
             ", cntUsed=" + cntUsed +
+            ", searchContext='" + searchContext + '\'' +
+            ", caseSensitive=" + caseSensitive +
+            ", wholeWordsOnly=" + wholeWordsOnly +
+            ", regularExpressions=" + regularExpressions +
+            ", moduleName='" + moduleName + '\'' +
+            ", directoryName='" + directoryName + '\'' +
+            ", customScope=" + customScope +
+            ", projectScope=" + projectScope +
             '}';
     }
 }

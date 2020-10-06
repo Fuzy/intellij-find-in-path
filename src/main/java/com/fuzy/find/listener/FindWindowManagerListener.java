@@ -47,11 +47,13 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
         if (content.isEmpty()) {
             return;
         }
+
+        if (updateUsageProperties(currentFindModel)) {
+            return;
+        }
+
         String question = MessageFormat.format("Do you want to save search options used in search for {0}?",
             content);
-
-        //TODO 1. existuje ulozene nastaveni se stejnymi parametry - zadny dialog
-        //TODO 2. pouzil jsem hledani s novym nastavenim - dotaz zda ulozit
 
         AnAction saveAction = createSaveAction(currentFindModel);
 
@@ -72,11 +74,13 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
         };
     }
 
-    private void saveFindOption(FindModel currentFindModel, String name) {
+    private void saveFindOption(FindModel findModel, String name) {
         ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
-        configurationManager.save(currentFindModel, name);
+        configurationManager.save(findModel, name);
     }
 
-    //com.intellij.psi.search.PredefinedSearchScopeProvider.getPredefinedScopes
-    //NamedScopeManager.getInstance(project); workspace.xml
+    private boolean updateUsageProperties(FindModel findModel) {
+        ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
+        return configurationManager.updateUsagePropertiesIfExists(findModel);
+    }
 }
