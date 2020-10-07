@@ -5,6 +5,7 @@ import javax.swing.SwingUtilities;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.fuzy.find.persistence.ConfigurationManager;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
 import com.intellij.find.FindSettings;
@@ -43,6 +44,8 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
             settings.setFileMask(model.getFileFilter());
             settings.initModelBySetings(model);
 
+            updateUsagePropertiesIfExists(model);
+
             SwingUtilities.invokeLater(() -> processSearch(dataContext));
 
         } catch (Throwable ex) {
@@ -57,6 +60,11 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
             FindInProjectUtil.setDirectoryName(model, dataContext);
             findInProjectManager.findInPath(model);
         });
+    }
+
+    private boolean updateUsagePropertiesIfExists(FindModel findModel) {
+        ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
+        return configurationManager.updateUsagePropertiesIfExists(findModel);
     }
 
     public String getUuid() {

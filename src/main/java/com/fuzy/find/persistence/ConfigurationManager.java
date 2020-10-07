@@ -90,6 +90,19 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
         return true;
     }
 
+    public boolean existsPersistentOption(FindModel findModel) {
+        FindOptions findOptions = getState();
+        if (findOptions == null) {
+            return false;
+        }
+
+        FindOption findOption = new FindOption();
+        updateFindOptionByModel(findOption, findModel);
+
+        Optional<FindOption> first = findOptions.getOptions().stream().filter(findOption::equals).findFirst();
+        return first.isPresent();
+    }
+
     private void updateUsageProperties(FindOption findOption) {
         findOption.setLastUsed(LocalDateTime.now());
         findOption.setCntUsed(findOption.getCntUsed() + 1);
