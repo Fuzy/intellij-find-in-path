@@ -52,10 +52,12 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
             return;
         }
 
+        saveAsLastUsed(currentFindModel);
+
         String question = MessageFormat.format("Do you want to save search options used in search for {0}?",
             content);
 
-        AnAction saveAction = createSaveAction(currentFindModel);//TODO neptat se opakovane
+        AnAction saveAction = createSaveAction(currentFindModel);
 
         NOTIFICATION_GROUP.createNotification(question, NotificationType.INFORMATION)
             .addAction(saveAction).notify(project);
@@ -82,5 +84,10 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
     private boolean existsPersistentOption(FindModel findModel) {
         ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
         return configurationManager.existsPersistentOption(findModel);
+    }
+
+    private void saveAsLastUsed(FindModel findModel) {
+        ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
+        configurationManager.saveAsLastUsed(findModel);
     }
 }

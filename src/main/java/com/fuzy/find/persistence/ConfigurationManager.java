@@ -17,6 +17,8 @@ import com.intellij.openapi.project.Project;
 @State(name = "FindInPathConfiguration", storages = @Storage("FindInPathConfiguration.xml"))
 public class ConfigurationManager implements PersistentStateComponent<FindOptions> {
 
+    private static final String LAST_USED = "com.fuzy.find.last.used.search";
+
     FindOptions findOptions;
 
     @Override
@@ -35,6 +37,10 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
 
     public static ConfigurationManager getInstance(Project project) {
         return ServiceManager.getService(project, ConfigurationManager.class);
+    }
+
+    public void saveAsLastUsed(FindModel findModel) {
+        save(findModel, LAST_USED);
     }
 
     public void save(FindModel findModel, String name) {
@@ -71,36 +77,33 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
     }
 
     public boolean updateUsagePropertiesIfExists(FindModel findModel) {
-        FindOptions findOptions = getState();
-        if (findOptions == null) {
+
+        Optional<FindOption> findEquals = find(findModel);
+        if (findEquals.isEmpty()) {
             return false;
         }
 
-        FindOption findOption = new FindOption();
-        updateFindOptionByModel(findOption, findModel);
-
-        Optional<FindOption> first = findOptions.getOptions().stream().filter(findOption::equals).findFirst();
-        if (first.isEmpty()) {
-            return false;
-        }
-
-        FindOption saved = first.get();
+        FindOption saved = findEquals.get();
         updateUsageProperties(saved);
 
         return true;
     }
 
     public boolean existsPersistentOption(FindModel findModel) {
+        return find(findModel).isPresent();
+    }
+
+    private Optional<FindOption> find(FindModel findModel) {
+
         FindOptions findOptions = getState();
         if (findOptions == null) {
-            return false;
+            return Optional.empty();
         }
 
         FindOption findOption = new FindOption();
         updateFindOptionByModel(findOption, findModel);
 
-        Optional<FindOption> first = findOptions.getOptions().stream().filter(findOption::equals).findFirst();
-        return first.isPresent();
+        return findOptions.getOptions().stream().filter(findOption::equals).findFirst();
     }
 
     private void updateUsageProperties(FindOption findOption) {
