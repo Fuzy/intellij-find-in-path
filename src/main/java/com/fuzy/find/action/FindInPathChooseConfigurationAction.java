@@ -3,19 +3,15 @@ package com.fuzy.find.action;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractAction;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.fuzy.find.model.FindByModelAction;
 import com.fuzy.find.model.FindUtils;
 import com.fuzy.find.notification.Notifications;
 import com.fuzy.find.persistence.ConfigurationManager;
-import com.intellij.find.FindManager;
-import com.intellij.find.FindModel;
 import com.intellij.find.findInProject.FindInProjectManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
@@ -58,20 +54,7 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
                 return;
             }
 
-            final FindManager findManager = FindManager.getInstance(project);
-            FindModel defaultFindModel = findManager.getFindInProjectModel().clone();
-
-            List<FindByModelAction> findActions = new FindUtils().createModels(project);
-            List<FindInPathProfileAction> actions = new ArrayList<>();
-
-            actions.add(new FindInPathProfileAction(project, defaultFindModel, "default", "default"));
-
-            for (FindByModelAction findAction : findActions) {
-                FindModel model = findAction.getModel();
-                model.setStringToFind(stringToFind);
-                FindInPathProfileAction action = new FindInPathProfileAction(project, model, findAction.getUuid(), findAction.getName());
-                actions.add(action);
-            }
+            List<FindInPathProfileAction> actions = new FindUtils().createActions(project, stringToFind);
 
             showPopup(dataContext, actions, project);
         } catch (Throwable ex) {

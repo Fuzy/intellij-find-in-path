@@ -1,9 +1,13 @@
 package com.fuzy.find.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.NotNull;
+
+import com.fuzy.find.action.FindInPathProfileAction;
 import com.fuzy.find.persistence.ConfigurationManager;
 import com.fuzy.find.persistence.FindOption;
 import com.fuzy.find.persistence.FindOptions;
@@ -13,37 +17,65 @@ import com.intellij.openapi.project.Project;
 
 public class FindUtils {
 
-    public List<FindByModelAction> createModels(Project project) {
-        List<FindByModelAction> actions = new ArrayList<>();
+    public static final String LAST_USED = "com.fuzy.find.last.used.search";
 
-        ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
-        FindOptions state = manager.getState();
-        if (state != null) {
+    public List<FindInPathProfileAction> createActions(Project project, String stringToFind) {
 
-            List<FindOption> options = state.getOptions();
-            actions.addAll(options.stream().map(this::createAction)
-                .collect(Collectors.toList()));
-        }
-
+        List<FindInPathProfileAction> actions = new ArrayList<>();
+        actions.add(new FindInPathProfileAction(project, createEmpty(), "empty", "Empty"));
+        actions.addAll(initActionsOfPersistentState(project));
+        actions.forEach(a -> a.getModel().setStringToFind(stringToFind));
         return actions;
     }
 
-    private FindByModelAction createAction(FindOption findOption) {
-        FindModel model = new FindModel();
-        move(findOption, model);
-        return new FindByModelAction(findOption.getUuid(), findOption.getName(), model);
+    private List<FindInPathProfileAction> initActionsOfPersistentState(Project project) {
+        ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
+        FindOptions state = manager.getState();
+
+        if (state != null) {
+
+            List<FindOption> options = state.getOptions();
+
+            return options.stream()
+                .map(o -> {
+                    FindModel model = new FindModel();
+                    initModel(o, model);
+                    return new FindInPathProfileAction(project, model, o.getUuid(), o.getName());
+                }).collect(Collectors.toList());
+        }
+
+        return Collections.emptyList();
     }
 
-    private void move(FindOption findOption, FindModel model) {
+    private void initModel(FindOption findOption, FindModel model) {
         model.setFileFilter(findOption.getFileFilter());
         model.setCaseSensitive(findOption.isCaseSensitive());
         model.setRegularExpressions(findOption.isRegularExpressions());
         model.setWholeWordsOnly(findOption.isWholeWordsOnly());
-//        model.setSearchContext(model.getSearchContext().name());
         model.setModuleName(findOption.getModuleName());
         model.setDirectoryName(findOption.getDirectoryName());
         model.setCustomScope(findOption.isCustomScope());
         model.setProjectScope(findOption.isProjectScope());
         model.setFileFilter(findOption.getFileFilter());
+
+        try {
+            model.setSearchContext(FindModel.SearchContext.valueOf(findOption.getSearchContext()));
+        } catch (IllegalArgumentException e) {
+            // ignore
+        }
+    }
+
+    @NotNull
+    private FindModel createEmpty() {
+        FindModel model = new FindModel();
+        model.setCaseSensitive(false);
+        model.setFileFilter(null);
+        model.setRegularExpressions(false);
+        model.setWholeWordsOnly(false);
+        model.setModuleName(null);
+        model.setDirectoryName(null);
+        model.setCustomScope(false);
+        model.setProjectScope(true);
+        return model;
     }
 }

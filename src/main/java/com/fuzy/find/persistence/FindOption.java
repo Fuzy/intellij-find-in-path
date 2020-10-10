@@ -133,7 +133,7 @@ public class FindOption {
     }
 
     //TODO pokud pozdeji pridam nejake nastaveni tak nebudou shodne - v persistentnim zaznamu budou property chybet, co s tim?
-
+    //TODO SearchScope
     //com.intellij.psi.search.PredefinedSearchScopeProvider.getPredefinedScopes
     //NamedScopeManager.getInstance(project); workspace.xml
 

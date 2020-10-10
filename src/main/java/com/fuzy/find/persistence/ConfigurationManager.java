@@ -7,6 +7,7 @@ import java.util.function.Predicate;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.fuzy.find.model.FindUtils;
 import com.intellij.find.FindModel;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -16,8 +17,6 @@ import com.intellij.openapi.project.Project;
 
 @State(name = "FindInPathConfiguration", storages = @Storage("FindInPathConfiguration.xml"))
 public class ConfigurationManager implements PersistentStateComponent<FindOptions> {
-
-    private static final String LAST_USED = "com.fuzy.find.last.used.search";
 
     FindOptions findOptions;
 
@@ -40,10 +39,14 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
     }
 
     public void saveAsLastUsed(FindModel findModel) {
-        save(findModel, LAST_USED);
+        save(findModel, "Last used", FindUtils.LAST_USED);//TODO duplicita
     }
 
     public void save(FindModel findModel, String name) {
+        save(findModel, name, UUID.randomUUID().toString());
+    }
+
+    private void save(FindModel findModel, String name, String uuid) {
         FindOptions findOptions = getState();
 
         if (findOptions == null) {
@@ -52,7 +55,7 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
         setState(findOptions);
 
         FindOption findOption = new FindOption();
-        findOption.setUuid(UUID.randomUUID().toString());
+        findOption.setUuid(uuid);
         updateFindOptionByModel(findOption, findModel);
         updateFindOptionByName(findOption, name);
         findOptions.getOptions().add(findOption);
@@ -76,17 +79,15 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
         findOption.setName(name);
     }
 
-    public boolean updateUsagePropertiesIfExists(FindModel findModel) {
+    public void updateUsagePropertiesIfExists(FindModel findModel) {
 
         Optional<FindOption> findEquals = find(findModel);
         if (findEquals.isEmpty()) {
-            return false;
+            return;
         }
 
         FindOption saved = findEquals.get();
         updateUsageProperties(saved);
-
-        return true;
     }
 
     public boolean existsPersistentOption(FindModel findModel) {

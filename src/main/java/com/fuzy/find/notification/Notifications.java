@@ -21,6 +21,7 @@ public class Notifications {
             PluginId.getId(PLUGIN_ID));
 
     public static void notifyError(Throwable ex, Project project) {
+        //TODO error if exists, stacktrace if NPE
         StringWriter sw = new StringWriter();
         PrintWriter pw = new PrintWriter(sw);
         ex.printStackTrace(pw);
