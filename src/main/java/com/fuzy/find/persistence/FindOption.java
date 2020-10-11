@@ -27,6 +27,7 @@ public class FindOption {
     private String directoryName;
     private boolean customScope;
     private boolean projectScope;
+    private String scope;
 
     public String getUuid() {
         return uuid;
@@ -132,10 +133,13 @@ public class FindOption {
         return projectScope;
     }
 
-    //TODO pokud pozdeji pridam nejake nastaveni tak nebudou shodne - v persistentnim zaznamu budou property chybet, co s tim?
-    //TODO SearchScope
-    //com.intellij.psi.search.PredefinedSearchScopeProvider.getPredefinedScopes
-    //NamedScopeManager.getInstance(project); workspace.xml
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
 
     @Override
     public boolean equals(Object o) {

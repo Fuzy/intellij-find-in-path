@@ -2,7 +2,9 @@ package com.fuzy.find.model;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
@@ -14,6 +16,8 @@ import com.fuzy.find.persistence.FindOptions;
 import com.intellij.find.FindModel;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.search.PredefinedSearchScopeProvider;
+import com.intellij.psi.search.SearchScope;
 
 public class FindUtils {
 
@@ -23,9 +27,16 @@ public class FindUtils {
 
         List<FindInPathProfileAction> actions = new ArrayList<>();
         actions.add(new FindInPathProfileAction(project, createEmpty(), "empty", "Empty"));
-        actions.addAll(initActionsOfPersistentState(project));
+        List<FindInPathProfileAction> persistent = initActionsOfPersistentState(project);
+        sortAlphabetically(persistent);
+        actions.addAll(persistent);
         actions.forEach(a -> a.getModel().setStringToFind(stringToFind));
         return actions;
+    }
+
+    private void sortAlphabetically(List<FindInPathProfileAction> actions) {
+        actions.sort(Comparator.comparing(FindInPathProfileAction::getName,
+            Comparator.nullsLast(Comparator.naturalOrder())));
     }
 
     private List<FindInPathProfileAction> initActionsOfPersistentState(Project project) {
@@ -39,7 +50,7 @@ public class FindUtils {
             return options.stream()
                 .map(o -> {
                     FindModel model = new FindModel();
-                    initModel(o, model);
+                    initModel(project, o, model);
                     return new FindInPathProfileAction(project, model, o.getUuid(), o.getName());
                 }).collect(Collectors.toList());
         }
@@ -47,7 +58,7 @@ public class FindUtils {
         return Collections.emptyList();
     }
 
-    private void initModel(FindOption findOption, FindModel model) {
+    private void initModel(Project project, FindOption findOption, FindModel model) {
         model.setFileFilter(findOption.getFileFilter());
         model.setCaseSensitive(findOption.isCaseSensitive());
         model.setRegularExpressions(findOption.isRegularExpressions());
@@ -57,6 +68,15 @@ public class FindUtils {
         model.setCustomScope(findOption.isCustomScope());
         model.setProjectScope(findOption.isProjectScope());
         model.setFileFilter(findOption.getFileFilter());
+
+        //NamedScopeManager.getInstance(project); workspace.xml
+        String scopeName = findOption.getScope();
+        if (scopeName != null) {
+            List<SearchScope> predefined = PredefinedSearchScopeProvider.getInstance().getPredefinedScopes(
+                project, null, true, false, false, false, false);
+            Optional<SearchScope> first = predefined.stream().filter(scope -> scope.getDisplayName().equals(scopeName)).findFirst();
+            first.ifPresent(model::setCustomScope);
+        }
 
         try {
             model.setSearchContext(FindModel.SearchContext.valueOf(findOption.getSearchContext()));
@@ -76,6 +96,16 @@ public class FindUtils {
         model.setDirectoryName(null);
         model.setCustomScope(false);
         model.setProjectScope(true);
+        model.setCustomScope(null);
+        model.setSearchContext(FindModel.SearchContext.ANY);
         return model;
+    }
+
+    public static String trimToEmpty(String s) {
+        if (s == null) {
+            return "";
+        }
+
+        return s.trim();
     }
 }

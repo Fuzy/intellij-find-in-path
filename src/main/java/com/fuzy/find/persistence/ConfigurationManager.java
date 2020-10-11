@@ -14,6 +14,7 @@ import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.components.State;
 import com.intellij.openapi.components.Storage;
 import com.intellij.openapi.project.Project;
+import com.intellij.psi.search.SearchScope;
 
 @State(name = "FindInPathConfiguration", storages = @Storage("FindInPathConfiguration.xml"))
 public class ConfigurationManager implements PersistentStateComponent<FindOptions> {
@@ -39,7 +40,8 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
     }
 
     public void saveAsLastUsed(FindModel findModel) {
-        save(findModel, "Last used", FindUtils.LAST_USED);//TODO duplicita
+        delete(FindUtils.LAST_USED);
+        save(findModel, "Last used", FindUtils.LAST_USED);
     }
 
     public void save(FindModel findModel, String name) {
@@ -62,15 +64,19 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
     }
 
     private void updateFindOptionByModel(FindOption findOption, FindModel model) {
-        findOption.setFileFilter(model.getFileFilter());
+        findOption.setFileFilter(FindUtils.trimToEmpty(model.getFileFilter()));
         findOption.setCaseSensitive(model.isCaseSensitive());
         findOption.setRegularExpressions(model.isRegularExpressions());
         findOption.setWholeWordsOnly(model.isWholeWordsOnly());
         findOption.setSearchContext(model.getSearchContext().name());
-        findOption.setModuleName(model.getModuleName());
-        findOption.setDirectoryName(model.getDirectoryName());
+        findOption.setModuleName(FindUtils.trimToEmpty(model.getModuleName()));
+        findOption.setDirectoryName(FindUtils.trimToEmpty(model.getDirectoryName()));
         findOption.setCustomScope(model.isCustomScope());
         findOption.setProjectScope(model.isProjectScope());
+        SearchScope customScope = model.getCustomScope();
+        if (customScope != null) {
+            findOption.setScope(customScope.getDisplayName());
+        }
 
         updateUsageProperties(findOption);
     }
