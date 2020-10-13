@@ -59,7 +59,6 @@ public class FindUtils {
     }
 
     private void initModel(Project project, FindOption findOption, FindModel model) {
-        model.setFileFilter(findOption.getFileFilter());
         model.setCaseSensitive(findOption.isCaseSensitive());
         model.setRegularExpressions(findOption.isRegularExpressions());
         model.setWholeWordsOnly(findOption.isWholeWordsOnly());

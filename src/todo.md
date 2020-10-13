@@ -1,18 +1,17 @@
 ###TODO
 
-Ukladani nastaveni
-- novy
-- prejmenovat
-
 Funkce
-- ukládat scope hledání
-- řazení dle posledního použití
-- řazení dle abecedy
+- ukládat custom scope
 
 Pred zverejnenim
 - vynikajici manual
+- github repo na issues
 - zmena hesla na martinkadlecmarketplace
+- https://plugins.jetbrains.com/docs/marketplace/
+- v1.0.0
 
 Dokumentace
-- video navod
+- apng navod ze screenshotu
+- ukladane hodnoty
 - kde je ulozeno nastaveni
+- preddefinovane profily 

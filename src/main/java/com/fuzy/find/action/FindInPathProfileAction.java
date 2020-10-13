@@ -10,10 +10,9 @@ import com.fuzy.find.persistence.ConfigurationManager;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
 import com.intellij.find.findInProject.FindInProjectManager;
-import com.intellij.find.impl.FindInProjectUtil;
+import com.intellij.find.replaceInProject.ReplaceInProjectManager;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
-import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 
@@ -34,24 +33,25 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
 
     @Override
     public void actionPerformed(@NotNull AnActionEvent e) {
-        DataContext dataContext = e.getDataContext();
-
         try {
             updateUsagePropertiesIfExists(model);
 
-            SwingUtilities.invokeLater(() -> processSearch(dataContext));
+            SwingUtilities.invokeLater(this::processSearch);
 
         } catch (Throwable ex) {
             Notifications.notifyError(ex, project);
         }
     }
 
-    private void processSearch(DataContext dataContext) {
+    private void processSearch() {
         FindManager findManager = FindManager.getInstance(project);
         findManager.showFindDialog(model, () -> {
-            FindInProjectManager findInProjectManager = FindInProjectManager.getInstance(project);
-            FindInProjectUtil.setDirectoryName(model, dataContext);
-            findInProjectManager.findInPath(model);
+            if (model.isReplaceState()) {
+                ReplaceInProjectManager.getInstance(project).replaceInPath(model);
+            } else {
+                FindInProjectManager findInProjectManager = FindInProjectManager.getInstance(project);
+                findInProjectManager.findInPath(model);
+            }
         });
     }
 
