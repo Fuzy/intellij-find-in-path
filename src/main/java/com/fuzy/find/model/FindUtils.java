@@ -59,6 +59,8 @@ public class FindUtils {
     }
 
     private void initModel(Project project, FindOption findOption, FindModel model) {
+        resetToDefaults(model);
+
         model.setCaseSensitive(findOption.isCaseSensitive());
         model.setRegularExpressions(findOption.isRegularExpressions());
         model.setWholeWordsOnly(findOption.isWholeWordsOnly());
@@ -82,6 +84,11 @@ public class FindUtils {
         } catch (IllegalArgumentException e) {
             // ignore
         }
+    }
+
+    private void resetToDefaults(FindModel model) {
+        // every property which is not persisted (or is not present in persistent state)
+        // should be reset to defaults
     }
 
     @NotNull

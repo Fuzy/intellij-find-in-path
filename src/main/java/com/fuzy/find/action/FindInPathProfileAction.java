@@ -49,9 +49,12 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
             if (model.isReplaceState()) {
                 ReplaceInProjectManager.getInstance(project).replaceInPath(model);
             } else {
+                // Search in project
                 FindInProjectManager findInProjectManager = FindInProjectManager.getInstance(project);
                 findInProjectManager.findInPath(model);
             }
+
+            // TODO seach in directory - com.intellij.find.impl.FindInProjectUtil.setDirectoryName
         });
     }
 
