@@ -58,6 +58,40 @@ public class FindUtils {
         return Collections.emptyList();
     }
 
+    /**
+     * Before options are applied, internal find model should be reset
+     * to it's default state. Then applied setting is always same.
+     */
+    public static void resetToDefaults(FindModel model) {
+        model.setStringToFind("");
+        model.setStringToReplace("");
+        model.setFileFilter(null);
+        // com.intellij.find.impl.FindSettingsImpl.FIND_SCOPE_GLOBAL
+//        model.setCustomScopeName("global");
+        model.setCustomScopeName(null);
+        model.setModuleName(null);
+        model.setDirectoryName(null);
+        model.setSearchContext(FindModel.SearchContext.ANY);
+        model.setCaseSensitive(false);
+        model.setPreserveCase(false);
+        model.setWholeWordsOnly(false);
+        model.setMultiline(true);
+        model.setCustomScope(null);
+        model.setCustomScope(false);
+        model.setGlobal(true);
+        model.setProjectScope(true);
+        model.setWithSubdirectories(true);
+        model.setSearchInProjectFiles(false);
+        model.setFindAllEnabled(false);
+        model.setFindAll(false);
+        model.setForward(true);
+        model.setFromCursor(false); // for search in project
+        model.setMultipleFiles(true);
+        model.setPromptOnReplace(true);
+        model.setReplaceState(false);
+        model.setReplaceAll(false);
+    }
+
     private void initModel(Project project, FindOption findOption, FindModel model) {
         resetToDefaults(model);
 
@@ -84,11 +118,6 @@ public class FindUtils {
         } catch (IllegalArgumentException e) {
             // ignore
         }
-    }
-
-    private void resetToDefaults(FindModel model) {
-        // every property which is not persisted (or is not present in persistent state)
-        // should be reset to defaults
     }
 
     @NotNull
