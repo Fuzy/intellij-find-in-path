@@ -65,6 +65,7 @@ public class FindUtils {
     public static void resetToDefaults(FindModel model) {
         model.setStringToFind("");
         model.setStringToReplace("");
+        model.setRegularExpressions(false);
         model.setFileFilter(null);
         // com.intellij.find.impl.FindSettingsImpl.FIND_SCOPE_GLOBAL
 //        model.setCustomScopeName("global");
