@@ -1,12 +1,10 @@
 package com.fuzy.find.model;
 
-import java.util.List;
 
 import com.fuzy.find.TestUtils;
 import com.intellij.find.FindInProjectSettings;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
-import com.intellij.find.FindSettings;
 import com.intellij.find.findInProject.FindInProjectManager;
 import com.intellij.openapi.module.Module;
 import com.intellij.openapi.project.Project;
@@ -37,6 +35,7 @@ public class FindModelTest extends BasePlatformTestCase {
         FindModel findInProjectModel = findManager.getFindInProjectModel();
         FindUtils.resetToDefaults(findInProjectModel); // reset
         TestUtils.assertInitialModelState(findInProjectModel);
+        assertNull(findInProjectModel.getCustomScopeName());
     }
 
     public void testFindByTextModel() {

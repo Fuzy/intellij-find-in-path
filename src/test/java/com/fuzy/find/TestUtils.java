@@ -10,8 +10,6 @@ public class TestUtils {
         assertNotNull(model);
         assertEquals("", model.getStringToFind());
         assertNull(model.getFileFilter());
-//        assertEquals("global", model.getCustomScopeName());
-        assertNull(model.getCustomScopeName());
         assertNull(model.getModuleName());
         assertNull(model.getDirectoryName());
         assertEquals(FindModel.SearchContext.ANY, model.getSearchContext());
