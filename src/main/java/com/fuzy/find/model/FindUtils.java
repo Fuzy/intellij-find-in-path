@@ -22,15 +22,15 @@ import com.intellij.psi.search.SearchScope;
 public class FindUtils {
 
     public static final String LAST_USED = "com.fuzy.find.last.used.search";
+    public static final String EMPTY = "com.fuzy.find.empty";
 
     public List<FindInPathProfileAction> createActions(Project project, String stringToFind) {
 
         List<FindInPathProfileAction> actions = new ArrayList<>();
-        actions.add(new FindInPathProfileAction(project, createEmpty(), "empty", "Empty"));
-        List<FindInPathProfileAction> persistent = initActionsOfPersistentState(project);
+        actions.add(new FindInPathProfileAction(project, EMPTY, "Empty", stringToFind));
+        List<FindInPathProfileAction> persistent = initActionsOfPersistentState(project, stringToFind);
         sortAlphabetically(persistent);
         actions.addAll(persistent);
-        actions.forEach(a -> a.getModel().setStringToFind(stringToFind));
         return actions;
     }
 
@@ -39,7 +39,7 @@ public class FindUtils {
             Comparator.nullsLast(Comparator.naturalOrder())));
     }
 
-    private List<FindInPathProfileAction> initActionsOfPersistentState(Project project) {
+    private List<FindInPathProfileAction> initActionsOfPersistentState(Project project, String stringToFind) {
         ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
         FindOptions state = manager.getState();
 
@@ -48,14 +48,28 @@ public class FindUtils {
             List<FindOption> options = state.getOptions();
 
             return options.stream()
-                .map(o -> {
-                    FindModel model = new FindModel();
-                    initModel(project, o, model);
-                    return new FindInPathProfileAction(project, model, o.getUuid(), o.getName());
-                }).collect(Collectors.toList());
+                .map(o -> new FindInPathProfileAction(project, o.getUuid(), o.getName(), stringToFind))
+                .collect(Collectors.toList());
         }
 
         return Collections.emptyList();
+    }
+
+    public FindModel modelForUuid(String uuid, Project project) {
+
+        if (EMPTY.equals(uuid)) {
+            return createEmpty();
+        }
+
+        ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
+        FindOption byUuid = manager.findByUuid(uuid);
+        if (byUuid == null) {
+            return null;
+        }
+
+        FindModel model = new FindModel();
+        initModel(project, byUuid, model);
+        return model;
     }
 
     /**
@@ -115,7 +129,10 @@ public class FindUtils {
         }
 
         try {
-            model.setSearchContext(FindModel.SearchContext.valueOf(findOption.getSearchContext()));
+            String searchContext = findOption.getSearchContext();
+            if (searchContext != null) {
+                model.setSearchContext(FindModel.SearchContext.valueOf(searchContext));
+            }
         } catch (IllegalArgumentException e) {
             // ignore
         }

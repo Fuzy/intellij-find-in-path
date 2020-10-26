@@ -30,4 +30,13 @@ public class Notifications {
         NOTIFICATION_GROUP.createNotification(String.valueOf(sStackTrace), NotificationType.WARNING).notify(project);
     }
 
+    public static void notifyError(String msg, Project project) {
+        NOTIFICATION_GROUP.createNotification(msg, NotificationType.ERROR).notify(project);
+    }
+
+    public static void notifyInfo(String msg, Project project) {
+        NOTIFICATION_GROUP.createNotification(msg, NotificationType.INFORMATION).notify(project);
+    }
+
+
 }
