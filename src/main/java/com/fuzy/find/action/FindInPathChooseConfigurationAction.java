@@ -3,7 +3,10 @@ package com.fuzy.find.action;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.swing.AbstractAction;
 
@@ -18,13 +21,17 @@ import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
+import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.ui.popup.JBPopupFactory;
 import com.intellij.openapi.ui.popup.ListPopup;
+import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.ListPopupImpl;
+import com.intellij.util.ui.UIUtil;
 
 public class FindInPathChooseConfigurationAction extends AnAction implements DumbAware {
 
@@ -54,23 +61,33 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
                 return;
             }
 
-            List<FindInPathProfileAction> actions = new FindUtils().createActions(project, stringToFind);
+            Set<Character> usedMnemonics = new HashSet<>();
+            List<FindInPathProfileAction> predefinedActions =
+                    new FindUtils().createPredefinedActions(project, stringToFind, usedMnemonics);
+            List<FindInPathProfileAction> userActions =
+                    new FindUtils().createUserActions(project, stringToFind, usedMnemonics);
 
-            showPopup(dataContext, actions, project);
+            showPopup(dataContext, predefinedActions, userActions, project);
         } catch (Throwable ex) {
             Notifications.notifyError(ex, project);
         }
     }
 
-    private void showPopup(DataContext context, List<FindInPathProfileAction> applicable, Project project) {
+    // com.intellij.codeInsight.generation.surroundWith.SurroundWithHandler.doBuildSurroundActions
+    private void showPopup(DataContext context, List<FindInPathProfileAction> predefinedActions,
+            List<FindInPathProfileAction> userActions, Project project) {
 
-        JBPopupFactory.ActionSelectionAid mnemonics = JBPopupFactory.ActionSelectionAid.ALPHA_NUMBERING;
+        List<AnAction> applicable = new ArrayList<>(predefinedActions);
+        applicable.add(Separator.getInstance());
+        applicable.addAll(userActions);
+
+        JBPopupFactory.ActionSelectionAid mnemonics = JBPopupFactory.ActionSelectionAid.MNEMONICS;
         DefaultActionGroup group = new DefaultActionGroup(applicable.toArray(AnAction.EMPTY_ARRAY));
         ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(TITLE, group, context, mnemonics, true);
         if (popup instanceof ListPopupImpl) {
             ListPopupImpl listPopup = (ListPopupImpl) popup;
 
-            AbstractAction deleteOptions = createDeleteAction(applicable, project, listPopup);
+            AbstractAction deleteOptions = createDeleteAction(project, listPopup);
             listPopup.registerAction("delete", KeyEvent.VK_DELETE, 0, deleteOptions);
 
         }
@@ -78,23 +95,29 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
     }
 
     @NotNull
-    private AbstractAction createDeleteAction(List<FindInPathProfileAction> applicable, Project project, ListPopupImpl listPopup) {
+    private AbstractAction createDeleteAction(Project project, ListPopupImpl listPopup) {
         return new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int selectedIndex = listPopup.getList().getSelectedIndex();
+                Object selectedValue = listPopup.getList().getSelectedValue();
+
+                FindInPathProfileAction findInPathProfileAction = null;
+                if (selectedValue instanceof PopupFactoryImpl.ActionItem) {
+                    AnAction action = ((PopupFactoryImpl.ActionItem) selectedValue).getAction();
+                    if (action instanceof FindInPathProfileAction) {
+                        findInPathProfileAction = (FindInPathProfileAction) action;
+                    }
+                }
 
                 //hide
                 listPopup.dispose();
 
-                FindInPathProfileAction findInPathProfileAction = applicable.get(selectedIndex);
                 if (findInPathProfileAction == null) {
                     return;
                 }
 
                 String name = findInPathProfileAction.getName();
-                String question = MessageFormat.format("Delete search options named  {0}?",
-                    name);
+                String question = MessageFormat.format("Delete search options named  {0}?", name);
 
                 int i = Messages.showYesNoCancelDialog(question, "Delete Options", null);
                 if (Messages.YES == i) {
@@ -104,6 +127,19 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
             }
 
         };
+    }
+
+    public static String emphasiseMnemonic(String caption, Set<? super Character> usedMnemonics) {
+        if (StringUtil.isEmpty(caption)) return "";
+
+        for (int i = 0; i < caption.length(); i++) {
+            char c = caption.charAt(i);
+            if (usedMnemonics.add(Character.toUpperCase(c))) {
+                return UIUtil.MNEMONIC + String.valueOf(c) + ". " + caption;
+            }
+        }
+
+        return caption + " ";
     }
 
 }

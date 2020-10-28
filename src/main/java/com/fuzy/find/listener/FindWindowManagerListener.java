@@ -30,7 +30,7 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
 
     @Override
     public void stateChanged(@NotNull ToolWindowManager toolWindowManager) {
-
+        // TODO asi se to nezobrazi pokud bylo find window celou dobu otevrene -> dokumentace nebo jine reseni?
         if (!ToolWindowId.FIND.equals(toolWindowManager.getActiveToolWindowId())) {
             return;
         }

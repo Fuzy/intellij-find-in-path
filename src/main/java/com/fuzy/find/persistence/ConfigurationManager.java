@@ -41,7 +41,7 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
 
     public void saveAsLastUsed(FindModel findModel) {
         delete(FindUtils.LAST_USED);
-        save(findModel, "Last used", FindUtils.LAST_USED);
+        save(findModel, FindUtils.LAST_USED_NAME, FindUtils.LAST_USED);
     }
 
     public void save(FindModel findModel, String name) {

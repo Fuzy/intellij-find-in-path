@@ -25,8 +25,8 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
     private final String name;
     private final String stringToFind;
 
-    public FindInPathProfileAction(Project project, String uuid, String name, String stringToFind) {
-        super(name);
+    public FindInPathProfileAction(Project project, String uuid, String name, String presentationName, String stringToFind) {
+        super(presentationName);
         this.project = project;
         this.uuid = uuid;
         this.name = name;

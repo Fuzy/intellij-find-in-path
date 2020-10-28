@@ -5,10 +5,13 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.fuzy.find.action.FindInPathChooseConfigurationAction;
 import com.fuzy.find.action.FindInPathProfileAction;
 import com.fuzy.find.persistence.ConfigurationManager;
 import com.fuzy.find.persistence.FindOption;
@@ -23,23 +26,37 @@ public class FindUtils {
 
     public static final String LAST_USED = "com.fuzy.find.last.used.search";
     public static final String EMPTY = "com.fuzy.find.empty";
+    public static final String LAST_USED_NAME = "Recently used";
+    public static final String EMPTY_NAME = "Empty";
 
-    public List<FindInPathProfileAction> createActions(Project project, String stringToFind) {
-
+    public List<FindInPathProfileAction> createPredefinedActions(Project project, String stringToFind, Set<Character> usedMnemonics) {
         List<FindInPathProfileAction> actions = new ArrayList<>();
-        actions.add(new FindInPathProfileAction(project, EMPTY, "Empty", stringToFind));
-        List<FindInPathProfileAction> persistent = initActionsOfPersistentState(project, stringToFind);
-        sortAlphabetically(persistent);
-        actions.addAll(persistent);
+
+        String emptyName = FindInPathChooseConfigurationAction.emphasiseMnemonic(EMPTY_NAME, usedMnemonics);
+        actions.add(new FindInPathProfileAction(project, EMPTY, EMPTY_NAME, emptyName, stringToFind));
+
+        ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
+        FindOption byUuid = manager.findByUuid(LAST_USED);
+
+        String lastUsedName = FindInPathChooseConfigurationAction.emphasiseMnemonic(LAST_USED_NAME, usedMnemonics);
+        FindInPathProfileAction last = new FindInPathProfileAction(project, byUuid.getUuid(),
+                LAST_USED_NAME, lastUsedName, stringToFind);
+        actions.add(last);
         return actions;
+    }
+
+    public List<FindInPathProfileAction> createUserActions(Project project, String stringToFind, Set<Character> usedMnemonics) {
+        List<FindInPathProfileAction> persistent = initUserActionsOfPersistentState(project, stringToFind, usedMnemonics);
+        sortAlphabetically(persistent);
+        return new ArrayList<>(persistent);
     }
 
     private void sortAlphabetically(List<FindInPathProfileAction> actions) {
         actions.sort(Comparator.comparing(FindInPathProfileAction::getName,
-            Comparator.nullsLast(Comparator.naturalOrder())));
+                Comparator.nullsLast(Comparator.naturalOrder())));
     }
 
-    private List<FindInPathProfileAction> initActionsOfPersistentState(Project project, String stringToFind) {
+    private List<FindInPathProfileAction> initUserActionsOfPersistentState(Project project, String stringToFind, Set<Character> usedMnemonics) {
         ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
         FindOptions state = manager.getState();
 
@@ -47,9 +64,13 @@ public class FindUtils {
 
             List<FindOption> options = state.getOptions();
 
-            return options.stream()
-                .map(o -> new FindInPathProfileAction(project, o.getUuid(), o.getName(), stringToFind))
-                .collect(Collectors.toList());
+            Predicate<FindOption> filterByNameUuid = (o) -> o.getName() != null && !LAST_USED.equals(o.getUuid());
+            return options.stream().filter(filterByNameUuid)
+                    .map(o -> {
+                        String name = FindInPathChooseConfigurationAction.emphasiseMnemonic(o.getName(), usedMnemonics);
+                        return new FindInPathProfileAction(project, o.getUuid(), o.getName(), name, stringToFind);
+                    })
+                    .collect(Collectors.toList());
         }
 
         return Collections.emptyList();
@@ -123,7 +144,7 @@ public class FindUtils {
         String scopeName = findOption.getScope();
         if (scopeName != null) {
             List<SearchScope> predefined = PredefinedSearchScopeProvider.getInstance().getPredefinedScopes(
-                project, null, true, false, false, false, false);
+                    project, null, true, false, false, false, false);
             Optional<SearchScope> first = predefined.stream().filter(scope -> scope.getDisplayName().equals(scopeName)).findFirst();
             first.ifPresent(model::setCustomScope);
         }
