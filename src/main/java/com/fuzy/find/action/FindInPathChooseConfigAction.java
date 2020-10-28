@@ -24,7 +24,6 @@ import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Separator;
 import com.intellij.openapi.diagnostic.Logger;
-import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.ui.Messages;
@@ -53,16 +52,6 @@ public class FindInPathChooseConfigAction extends AnAction implements DumbAware 
         }
 
         try {
-            String stringToFind = null;
-
-            Editor editor = e.getData(CommonDataKeys.EDITOR);
-            if (editor != null) {
-                stringToFind = editor.getSelectionModel().getSelectedText();
-            }
-            if (stringToFind == null) {
-                stringToFind = "";
-            }
-
             FindInProjectManager findInProjectManager = FindInProjectManager.getInstance(project);
             if (!findInProjectManager.isEnabled()) {
                 LOG.warn("FindInProjectManager is not ready.");
@@ -71,9 +60,9 @@ public class FindInPathChooseConfigAction extends AnAction implements DumbAware 
 
             Set<Character> usedMnemonics = new HashSet<>();
             List<FindInPathProfileAction> predefinedActions =
-                    new FindUtils().createPredefinedActions(project, stringToFind, usedMnemonics);
+                    new FindUtils().createPredefinedActions(project, usedMnemonics);
             List<FindInPathProfileAction> userActions =
-                    new FindUtils().createUserActions(project, stringToFind, usedMnemonics);
+                    new FindUtils().createUserActions(project, usedMnemonics);
 
             showPopup(dataContext, predefinedActions, userActions, project);
         } catch (Throwable ex) {

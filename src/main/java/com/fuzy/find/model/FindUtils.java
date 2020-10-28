@@ -29,11 +29,11 @@ public class FindUtils {
     public static final String LAST_USED_NAME = "Recently used";
     public static final String EMPTY_NAME = "Empty";
 
-    public List<FindInPathProfileAction> createPredefinedActions(Project project, String stringToFind, Set<Character> usedMnemonics) {
+    public List<FindInPathProfileAction> createPredefinedActions(Project project, Set<Character> usedMnemonics) {
         List<FindInPathProfileAction> actions = new ArrayList<>();
 
         String emptyName = FindInPathChooseConfigAction.emphasiseMnemonic(EMPTY_NAME, usedMnemonics);
-        actions.add(new FindInPathProfileAction(EMPTY, EMPTY_NAME, emptyName, stringToFind));
+        actions.add(new FindInPathProfileAction(EMPTY, EMPTY_NAME, emptyName));
 
         ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
         FindOption byUuid = manager.findByUuid(LAST_USED);
@@ -43,13 +43,13 @@ public class FindUtils {
 
         String lastUsedName = FindInPathChooseConfigAction.emphasiseMnemonic(LAST_USED_NAME, usedMnemonics);
         FindInPathProfileAction last = new FindInPathProfileAction(byUuid.getUuid(),
-                LAST_USED_NAME, lastUsedName, stringToFind);
+                LAST_USED_NAME, lastUsedName);
         actions.add(last);
         return actions;
     }
 
-    public List<FindInPathProfileAction> createUserActions(Project project, String stringToFind, Set<Character> usedMnemonics) {
-        List<FindInPathProfileAction> persistent = initUserActionsOfPersistentState(project, stringToFind, usedMnemonics);
+    public List<FindInPathProfileAction> createUserActions(Project project, Set<Character> usedMnemonics) {
+        List<FindInPathProfileAction> persistent = initUserActionsOfPersistentState(project, usedMnemonics);
         sortAlphabetically(persistent);
         return new ArrayList<>(persistent);
     }
@@ -59,7 +59,7 @@ public class FindUtils {
                 Comparator.nullsLast(Comparator.naturalOrder())));
     }
 
-    private List<FindInPathProfileAction> initUserActionsOfPersistentState(Project project, String stringToFind, Set<Character> usedMnemonics) {
+    private List<FindInPathProfileAction> initUserActionsOfPersistentState(Project project, Set<Character> usedMnemonics) {
         ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
         FindOptions state = manager.getState();
 
@@ -71,7 +71,7 @@ public class FindUtils {
             return options.stream().filter(filterByNameUuid)
                     .map(o -> {
                         String name = FindInPathChooseConfigAction.emphasiseMnemonic(o.getName(), usedMnemonics);
-                        return new FindInPathProfileAction(o.getUuid(), o.getName(), name, stringToFind);
+                        return new FindInPathProfileAction(o.getUuid(), o.getName(), name);
                     })
                     .collect(Collectors.toList());
         }
