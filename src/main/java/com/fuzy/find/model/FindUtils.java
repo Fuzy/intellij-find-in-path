@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.fuzy.find.action.FindInPathChooseConfigurationAction;
+import com.fuzy.find.action.FindInPathChooseConfigAction;
 import com.fuzy.find.action.FindInPathProfileAction;
 import com.fuzy.find.persistence.ConfigurationManager;
 import com.fuzy.find.persistence.FindOption;
@@ -32,13 +32,16 @@ public class FindUtils {
     public List<FindInPathProfileAction> createPredefinedActions(Project project, String stringToFind, Set<Character> usedMnemonics) {
         List<FindInPathProfileAction> actions = new ArrayList<>();
 
-        String emptyName = FindInPathChooseConfigurationAction.emphasiseMnemonic(EMPTY_NAME, usedMnemonics);
+        String emptyName = FindInPathChooseConfigAction.emphasiseMnemonic(EMPTY_NAME, usedMnemonics);
         actions.add(new FindInPathProfileAction(project, EMPTY, EMPTY_NAME, emptyName, stringToFind));
 
         ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
         FindOption byUuid = manager.findByUuid(LAST_USED);
+        if (byUuid == null) {
+            return actions;
+        }
 
-        String lastUsedName = FindInPathChooseConfigurationAction.emphasiseMnemonic(LAST_USED_NAME, usedMnemonics);
+        String lastUsedName = FindInPathChooseConfigAction.emphasiseMnemonic(LAST_USED_NAME, usedMnemonics);
         FindInPathProfileAction last = new FindInPathProfileAction(project, byUuid.getUuid(),
                 LAST_USED_NAME, lastUsedName, stringToFind);
         actions.add(last);
@@ -67,7 +70,7 @@ public class FindUtils {
             Predicate<FindOption> filterByNameUuid = (o) -> o.getName() != null && !LAST_USED.equals(o.getUuid());
             return options.stream().filter(filterByNameUuid)
                     .map(o -> {
-                        String name = FindInPathChooseConfigurationAction.emphasiseMnemonic(o.getName(), usedMnemonics);
+                        String name = FindInPathChooseConfigAction.emphasiseMnemonic(o.getName(), usedMnemonics);
                         return new FindInPathProfileAction(project, o.getUuid(), o.getName(), name, stringToFind);
                     })
                     .collect(Collectors.toList());

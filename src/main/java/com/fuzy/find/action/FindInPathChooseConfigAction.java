@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -22,6 +23,7 @@ import com.intellij.openapi.actionSystem.CommonDataKeys;
 import com.intellij.openapi.actionSystem.DataContext;
 import com.intellij.openapi.actionSystem.DefaultActionGroup;
 import com.intellij.openapi.actionSystem.Separator;
+import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.editor.Editor;
 import com.intellij.openapi.project.DumbAware;
 import com.intellij.openapi.project.Project;
@@ -33,7 +35,11 @@ import com.intellij.ui.popup.PopupFactoryImpl;
 import com.intellij.ui.popup.list.ListPopupImpl;
 import com.intellij.util.ui.UIUtil;
 
-public class FindInPathChooseConfigurationAction extends AnAction implements DumbAware {
+/**
+ * Shows dialog for selection of predefined and persisted configurations.
+ */
+public class FindInPathChooseConfigAction extends AnAction implements DumbAware {
+    private static final Logger LOG = Logger.getInstance(FindInPathChooseConfigAction.class);
 
     public static final String TITLE = "Choose Configuration";
 
@@ -41,10 +47,15 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
 
         DataContext dataContext = e.getDataContext();
         Project project = e.getData(CommonDataKeys.PROJECT);
-        Editor editor = e.getData(CommonDataKeys.EDITOR);
+        if (project == null) {
+            LOG.warn("Project is null.");
+            return;
+        }
 
         try {
             String stringToFind = null;
+
+            Editor editor = e.getData(CommonDataKeys.EDITOR);
             if (editor != null) {
                 stringToFind = editor.getSelectionModel().getSelectedText();
             }
@@ -52,12 +63,9 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
                 stringToFind = "";
             }
 
-            if (project == null) {
-                return;
-            }
-
             FindInProjectManager findInProjectManager = FindInProjectManager.getInstance(project);
             if (!findInProjectManager.isEnabled()) {
+                LOG.warn("FindInProjectManager is not ready.");
                 return;
             }
 
@@ -73,7 +81,6 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
         }
     }
 
-    // com.intellij.codeInsight.generation.surroundWith.SurroundWithHandler.doBuildSurroundActions
     private void showPopup(DataContext context, List<FindInPathProfileAction> predefinedActions,
             List<FindInPathProfileAction> userActions, Project project) {
 
@@ -81,22 +88,28 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
         applicable.add(Separator.getInstance());
         applicable.addAll(userActions);
 
-        JBPopupFactory.ActionSelectionAid mnemonics = JBPopupFactory.ActionSelectionAid.MNEMONICS;
         DefaultActionGroup group = new DefaultActionGroup(applicable.toArray(AnAction.EMPTY_ARRAY));
-        ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(TITLE, group, context, mnemonics, true);
-        if (popup instanceof ListPopupImpl) {
-            ListPopupImpl listPopup = (ListPopupImpl) popup;
-
-            AbstractAction deleteOptions = createDeleteAction(project, listPopup);
-            listPopup.registerAction("delete", KeyEvent.VK_DELETE, 0, deleteOptions);
-
-        }
+        ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(TITLE, group, context,
+                JBPopupFactory.ActionSelectionAid.MNEMONICS, true);
+        registerDeleteAction(project, popup);
         popup.showInFocusCenter();
+    }
+
+    private void registerDeleteAction(Project project, ListPopup popup) {
+        if (!(popup instanceof ListPopupImpl)) {
+            return;
+        }
+
+        ListPopupImpl listPopup = (ListPopupImpl) popup;
+
+        AbstractAction deleteOptions = createDeleteAction(project, listPopup);
+        listPopup.registerAction("delete", KeyEvent.VK_DELETE, 0, deleteOptions);
     }
 
     @NotNull
     private AbstractAction createDeleteAction(Project project, ListPopupImpl listPopup) {
         return new AbstractAction() {
+
             @Override
             public void actionPerformed(ActionEvent e) {
                 Object selectedValue = listPopup.getList().getSelectedValue();
@@ -113,24 +126,36 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
                 listPopup.dispose();
 
                 if (findInPathProfileAction == null) {
+                    LOG.error("Selected option is not instance of FindInPathProfileAction but " + selectedValue);
                     return;
                 }
 
-                String name = findInPathProfileAction.getName();
-                String question = MessageFormat.format("Delete search options named  {0}?", name);
-
-                int i = Messages.showYesNoCancelDialog(question, "Delete Options", null);
-                if (Messages.YES == i) {
-                    ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
-                    configurationManager.delete(findInPathProfileAction.getUuid());
+                String uuid = findInPathProfileAction.getUuid();
+                if (Arrays.asList(new String[]{FindUtils.LAST_USED, FindUtils.EMPTY}).contains(uuid)) {
+                    return;
                 }
+
+                askForSaveOptions(findInPathProfileAction, uuid, project);
             }
 
         };
     }
 
+    private void askForSaveOptions(FindInPathProfileAction findInPathProfileAction, String uuid, Project project) {
+        String name = findInPathProfileAction.getName();
+        String question = MessageFormat.format("Delete search options named  {0}?", name);
+
+        int i = Messages.showYesNoCancelDialog(question, "Delete Options", null);
+        if (Messages.YES == i) {
+            ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
+            configurationManager.delete(uuid);
+        }
+    }
+
     public static String emphasiseMnemonic(String caption, Set<? super Character> usedMnemonics) {
-        if (StringUtil.isEmpty(caption)) return "";
+        if (StringUtil.isEmpty(caption)) {
+            return "";
+        }
 
         for (int i = 0; i < caption.length(); i++) {
             char c = caption.charAt(i);
@@ -139,7 +164,7 @@ public class FindInPathChooseConfigurationAction extends AnAction implements Dum
             }
         }
 
-        return caption + " ";
+        return caption;
     }
 
 }
