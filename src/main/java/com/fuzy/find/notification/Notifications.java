@@ -38,5 +38,9 @@ public class Notifications {
         NOTIFICATION_GROUP.createNotification(msg, NotificationType.INFORMATION).notify(project);
     }
 
+    public static void notifyWarning(String msg, Project project) {
+        NOTIFICATION_GROUP.createNotification(msg, NotificationType.WARNING).notify(project);
+    }
+
 
 }

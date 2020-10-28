@@ -33,7 +33,7 @@ public class FindUtils {
         List<FindInPathProfileAction> actions = new ArrayList<>();
 
         String emptyName = FindInPathChooseConfigAction.emphasiseMnemonic(EMPTY_NAME, usedMnemonics);
-        actions.add(new FindInPathProfileAction(project, EMPTY, EMPTY_NAME, emptyName, stringToFind));
+        actions.add(new FindInPathProfileAction(EMPTY, EMPTY_NAME, emptyName, stringToFind));
 
         ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
         FindOption byUuid = manager.findByUuid(LAST_USED);
@@ -42,7 +42,7 @@ public class FindUtils {
         }
 
         String lastUsedName = FindInPathChooseConfigAction.emphasiseMnemonic(LAST_USED_NAME, usedMnemonics);
-        FindInPathProfileAction last = new FindInPathProfileAction(project, byUuid.getUuid(),
+        FindInPathProfileAction last = new FindInPathProfileAction(byUuid.getUuid(),
                 LAST_USED_NAME, lastUsedName, stringToFind);
         actions.add(last);
         return actions;
@@ -71,7 +71,7 @@ public class FindUtils {
             return options.stream().filter(filterByNameUuid)
                     .map(o -> {
                         String name = FindInPathChooseConfigAction.emphasiseMnemonic(o.getName(), usedMnemonics);
-                        return new FindInPathProfileAction(project, o.getUuid(), o.getName(), name, stringToFind);
+                        return new FindInPathProfileAction(o.getUuid(), o.getName(), name, stringToFind);
                     })
                     .collect(Collectors.toList());
         }
