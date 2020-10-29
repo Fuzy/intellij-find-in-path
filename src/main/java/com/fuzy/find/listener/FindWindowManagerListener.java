@@ -52,6 +52,7 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
             return;
         }
 
+        // if not saved profile, it will save to prevent unwanted prompt to save
         saveAsLastUsed(currentFindModel);
 
         String question = MessageFormat.format("Do you want to save search options used in search for {0}?",
@@ -72,6 +73,8 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
                 if (name != null) {
                     saveFindOption(currentFindModel, name);
                 }
+                //TODO com.intellij.openapi.ui.InputValidator
+                //TODO validate name already used
             }
         };
     }

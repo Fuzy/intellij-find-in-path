@@ -147,19 +147,21 @@ public class FindOption {
         if (o == null || getClass() != o.getClass()) return false;
         FindOption that = (FindOption) o;
         return caseSensitive == that.caseSensitive &&
-            wholeWordsOnly == that.wholeWordsOnly &&
-            regularExpressions == that.regularExpressions &&
-            customScope == that.customScope &&
-            projectScope == that.projectScope &&
-            Objects.equals(fileFilter, that.fileFilter) &&
-            Objects.equals(searchContext, that.searchContext) &&
-            Objects.equals(moduleName, that.moduleName) &&
-            Objects.equals(directoryName, that.directoryName);
+                wholeWordsOnly == that.wholeWordsOnly &&
+                regularExpressions == that.regularExpressions &&
+                customScope == that.customScope &&
+                projectScope == that.projectScope &&
+                Objects.equals(name, that.name) &&
+                Objects.equals(fileFilter, that.fileFilter) &&
+                Objects.equals(searchContext, that.searchContext) &&
+                Objects.equals(moduleName, that.moduleName) &&
+                Objects.equals(directoryName, that.directoryName) &&
+                Objects.equals(scope, that.scope);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(fileFilter, searchContext, caseSensitive, wholeWordsOnly, regularExpressions, moduleName, directoryName, customScope, projectScope);
+        return Objects.hash(name, fileFilter, searchContext, caseSensitive, wholeWordsOnly, regularExpressions, moduleName, directoryName, customScope, projectScope, scope);
     }
 
     @Override

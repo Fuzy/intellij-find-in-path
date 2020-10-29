@@ -60,6 +60,7 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
         findOption.setUuid(uuid);
         updateFindOptionByModel(findOption, findModel);
         updateFindOptionByName(findOption, name);
+        updateUsageProperties(findOption);
         findOptions.getOptions().add(findOption);
     }
 
@@ -77,8 +78,6 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
         if (customScope != null) {
             findOption.setScope(customScope.getDisplayName());
         }
-
-        updateUsageProperties(findOption);
     }
 
     private void updateFindOptionByName(FindOption findOption, String name) {
