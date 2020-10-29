@@ -14,7 +14,6 @@ import javax.swing.AbstractAction;
 import org.jetbrains.annotations.NotNull;
 
 import com.fuzy.find.model.FindUtils;
-import com.fuzy.find.notification.Notifications;
 import com.fuzy.find.persistence.ConfigurationManager;
 import com.intellij.find.findInProject.FindInProjectManager;
 import com.intellij.openapi.actionSystem.AnAction;
@@ -51,23 +50,19 @@ public class FindInPathChooseConfigAction extends AnAction implements DumbAware 
             return;
         }
 
-        try {
-            FindInProjectManager findInProjectManager = FindInProjectManager.getInstance(project);
-            if (!findInProjectManager.isEnabled()) {
-                LOG.warn("FindInProjectManager is not ready.");
-                return;
-            }
-
-            Set<Character> usedMnemonics = new HashSet<>();
-            List<FindInPathProfileAction> predefinedActions =
-                    new FindUtils().createPredefinedActions(project, usedMnemonics);
-            List<FindInPathProfileAction> userActions =
-                    new FindUtils().createUserActions(project, usedMnemonics);
-
-            showPopup(dataContext, predefinedActions, userActions, project);
-        } catch (Throwable ex) {
-            Notifications.notifyError(ex, project);
+        FindInProjectManager findInProjectManager = FindInProjectManager.getInstance(project);
+        if (!findInProjectManager.isEnabled()) {
+            LOG.warn("FindInProjectManager is not ready.");
+            return;
         }
+
+        Set<Character> usedMnemonics = new HashSet<>();
+        List<FindInPathProfileAction> predefinedActions =
+                new FindUtils().createPredefinedActions(project, usedMnemonics);
+        List<FindInPathProfileAction> userActions =
+                new FindUtils().createUserActions(project, usedMnemonics);
+
+        showPopup(dataContext, predefinedActions, userActions, project);
     }
 
     private void showPopup(DataContext context, List<FindInPathProfileAction> predefinedActions,
