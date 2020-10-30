@@ -1,6 +1,7 @@
 package com.fuzy.find.listener;
 
 import java.text.MessageFormat;
+import java.util.Arrays;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -20,6 +21,9 @@ import static com.fuzy.find.notification.Notifications.NOTIFICATION_GROUP;
 
 /**
  * After Find window is showed, it will evaluate whether to ask to save/update/delete settings.
+ * <p>
+ * Possible candidate for intercept find event is com.intellij.find.FindManager#FIND_MODEL_TOPIC
+ * but is not fired at Find in Path dialog.
  */
 public class FindWindowManagerListener implements ToolWindowManagerListener {
     private final Project project;
@@ -29,9 +33,10 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
     }
 
     @Override
-    public void stateChanged(@NotNull ToolWindowManager toolWindowManager) {
-        // TODO asi se to nezobrazi pokud bylo find window celou dobu otevrene -> dokumentace nebo jine reseni?
-        if (!ToolWindowId.FIND.equals(toolWindowManager.getActiveToolWindowId())) {
+    public void stateChanged(@NotNull ToolWindowManager twm) {
+
+        boolean isFind = Arrays.asList(twm.getActiveToolWindowId(), twm.getLastActiveToolWindowId()).contains(ToolWindowId.FIND);
+        if (!isFind) {
             return;
         }
 
@@ -56,12 +61,12 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
         saveAsLastUsed(currentFindModel);
 
         String question = MessageFormat.format("Do you want to save search options used in search for {0}?",
-            content);
+                content);
 
         AnAction saveAction = createSaveAction(currentFindModel);
 
         NOTIFICATION_GROUP.createNotification(question, NotificationType.INFORMATION)
-            .addAction(saveAction).notify(project);
+                .addAction(saveAction).notify(project);
     }
 
     @NotNull

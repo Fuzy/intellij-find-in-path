@@ -151,7 +151,6 @@ public class FindOption {
                 regularExpressions == that.regularExpressions &&
                 customScope == that.customScope &&
                 projectScope == that.projectScope &&
-                Objects.equals(name, that.name) &&
                 Objects.equals(fileFilter, that.fileFilter) &&
                 Objects.equals(searchContext, that.searchContext) &&
                 Objects.equals(moduleName, that.moduleName) &&
@@ -161,7 +160,7 @@ public class FindOption {
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, fileFilter, searchContext, caseSensitive, wholeWordsOnly, regularExpressions, moduleName, directoryName, customScope, projectScope, scope);
+        return Objects.hash(fileFilter, searchContext, caseSensitive, wholeWordsOnly, regularExpressions, moduleName, directoryName, customScope, projectScope, scope);
     }
 
     @Override
