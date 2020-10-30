@@ -2,16 +2,19 @@ package com.fuzy.find.listener;
 
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.fuzy.find.persistence.ConfigurationManager;
+import com.fuzy.find.util.StringUtils;
 import com.intellij.find.FindManager;
 import com.intellij.find.FindModel;
 import com.intellij.notification.NotificationType;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.InputValidator;
 import com.intellij.openapi.ui.Messages;
 import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
@@ -63,39 +66,61 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
         String question = MessageFormat.format("Do you want to save search options used in search for {0}?",
                 content);
 
-        AnAction saveAction = createSaveAction(currentFindModel);
+        List<String> names = collectNames();
+        AnAction saveAction = createSaveAction(currentFindModel, createValidator(names));
 
         NOTIFICATION_GROUP.createNotification(question, NotificationType.INFORMATION)
                 .addAction(saveAction).notify(project);
     }
 
     @NotNull
-    private AnAction createSaveAction(FindModel currentFindModel) {
+    private AnAction createSaveAction(FindModel currentFindModel, InputValidator validator) {
         return new AnAction("Save") {
+
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
-                String name = Messages.showInputDialog(project, "Save search options as", "Save Options", null);
+                String msg = "Save search options as";
+                String name = StringUtils.trimToNull(Messages.showInputDialog(project, msg,
+                        "Save Options", null, null, validator));
                 if (name != null) {
                     saveFindOption(currentFindModel, name);
                 }
-                //TODO com.intellij.openapi.ui.InputValidator
-                //TODO validate name already used
+
+            }
+        };
+    }
+
+    private InputValidator createValidator(List<String> names) {
+        return new InputValidator() {
+            @Override
+            public boolean checkInput(String inputString) {
+                return inputString != null && inputString.length() > 1;
+            }
+
+            @Override
+            public boolean canClose(String inputString) {
+                return !names.contains(inputString);
             }
         };
     }
 
     private void saveFindOption(FindModel findModel, String name) {
-        ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
-        configurationManager.save(findModel, name);
+        ConfigurationManager cm = ConfigurationManager.getInstance(project);
+        cm.save(findModel, name);
     }
 
     private boolean existsPersistentOption(FindModel findModel) {
-        ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
-        return configurationManager.existsPersistentOption(findModel);
+        ConfigurationManager cm = ConfigurationManager.getInstance(project);
+        return cm.existsPersistentOption(findModel);
     }
 
     private void saveAsLastUsed(FindModel findModel) {
-        ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
-        configurationManager.saveAsLastUsed(findModel);
+        ConfigurationManager cm = ConfigurationManager.getInstance(project);
+        cm.saveAsLastUsed(findModel);
+    }
+
+    private List<String> collectNames() {
+        ConfigurationManager cm = ConfigurationManager.getInstance(project);
+        return cm.collectNames();
     }
 }

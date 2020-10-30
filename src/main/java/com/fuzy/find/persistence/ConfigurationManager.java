@@ -1,13 +1,17 @@
 package com.fuzy.find.persistence;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.NotNull;
 
 import com.fuzy.find.model.FindUtils;
+import com.fuzy.find.util.StringUtils;
 import com.intellij.find.FindModel;
 import com.intellij.openapi.components.PersistentStateComponent;
 import com.intellij.openapi.components.ServiceManager;
@@ -65,13 +69,13 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
     }
 
     private void updateFindOptionByModel(FindOption findOption, FindModel model) {
-        findOption.setFileFilter(FindUtils.trimToEmpty(model.getFileFilter()));
+        findOption.setFileFilter(StringUtils.trimToEmpty(model.getFileFilter()));
         findOption.setCaseSensitive(model.isCaseSensitive());
         findOption.setRegularExpressions(model.isRegularExpressions());
         findOption.setWholeWordsOnly(model.isWholeWordsOnly());
         findOption.setSearchContext(model.getSearchContext().name());
-        findOption.setModuleName(FindUtils.trimToEmpty(model.getModuleName()));
-        findOption.setDirectoryName(FindUtils.trimToEmpty(model.getDirectoryName()));
+        findOption.setModuleName(StringUtils.trimToEmpty(model.getModuleName()));
+        findOption.setDirectoryName(StringUtils.trimToEmpty(model.getDirectoryName()));
         findOption.setCustomScope(model.isCustomScope());
         findOption.setProjectScope(model.isProjectScope());
         SearchScope customScope = model.getCustomScope();
@@ -134,6 +138,15 @@ public class ConfigurationManager implements PersistentStateComponent<FindOption
 
         Predicate<FindOption> isUuid = f -> uuid.equals(f.getUuid());
         return findOptions.getOptions().stream().filter(isUuid).findFirst().orElse(null);
+    }
+
+    public List<String> collectNames() {
+        FindOptions findOptions = getState();
+        if (findOptions == null) {
+            return Collections.emptyList();
+        }
+
+        return findOptions.getOptions().stream().map(FindOption::getName).collect(Collectors.toList());
     }
 
 }

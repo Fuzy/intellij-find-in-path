@@ -178,11 +178,4 @@ public class FindUtils {
         return model;
     }
 
-    public static String trimToEmpty(String s) {
-        if (s == null) {
-            return "";
-        }
-
-        return s.trim();
-    }
 }
