@@ -6,9 +6,8 @@ Funkce
 Pred zverejnenim
 - vynikajici manual
 - github repo na issues
-- zmena hesla na martinkadlecmarketplace
 - https://plugins.jetbrains.com/docs/marketplace/
-- v1.0.0
+- obfuskace https://plugins.jetbrains.com/docs/marketplace/obfuscate-the-plugin.html
 
 Dokumentace
 - apng navod ze screenshotu

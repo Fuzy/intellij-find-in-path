@@ -66,7 +66,7 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
 
         // Dropdown must contain this option
         FindSettings.getInstance().setFileMask(model.getFileFilter());
-
+        //TODO string to find?
 
         findManager.findInProject(dataContext, model);
     }
