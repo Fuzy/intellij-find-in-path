@@ -11,6 +11,7 @@ import com.fuzy.find.persistence.ConfigurationManager;
 import com.intellij.find.FindModel;
 import com.intellij.find.FindSettings;
 import com.intellij.find.findInProject.FindInProjectManager;
+import com.intellij.find.impl.FindInProjectUtil;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import com.intellij.openapi.actionSystem.CommonDataKeys;
@@ -66,7 +67,7 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
 
         // Dropdown must contain this option
         FindSettings.getInstance().setFileMask(model.getFileFilter());
-        //TODO string to find?
+        FindInProjectUtil.initStringToFindFromDataContext(model, dataContext);
 
         findManager.findInProject(dataContext, model);
     }
