@@ -9,8 +9,4 @@ Pred zverejnenim
 - https://plugins.jetbrains.com/docs/marketplace/
 - obfuskace https://plugins.jetbrains.com/docs/marketplace/obfuscate-the-plugin.html
 
-Dokumentace
-- apng navod ze screenshotu
-- ukladane hodnoty
-- kde je ulozeno nastaveni
-- preddefinovane profily 
+https://plugins.jetbrains.com/docs/marketplace/trying-out-the-marketplace.html

@@ -1,3 +1,12 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'net.sf.proguard:proguard-gradle:6.2.2'
+    }
+}
+
 plugins {
     id 'java'
     id 'org.jetbrains.intellij' version '0.4.21'
@@ -28,3 +37,33 @@ patchPluginXml {
       Add change notes here.<br>
       <em>most HTML tags may be used</em>"""
 }
+
+ext {
+    mainClassName = "com.fuzy.find.action.FindInPathChooseConfigAction"
+    basename = "find-in-path-profile-idea-plugin"
+    version = "1.0.0"
+}
+
+task obfuscate(type: proguard.gradle.ProGuardTask) {
+    injars "./build/libs/${basename}-${version}.jar"
+    outjars "./build/libs/${basename}-${version}-obf.jar"
+
+    libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
+
+    dontwarn
+    overloadaggressively
+    repackageclasses 'foo'
+    printmapping "./build/libs/${basename}.map"
+
+    keep 'class !foo.bar.buz**,!foo.bar.baz.** { *; }'
+
+    keepclasseswithmembers "public class ${mainClassName} { \
+    public static void main(java.lang.String[]); \
+  }"
+
+    keepclassmembers allowshrinking: true, 'enum * { \
+    public static **[] values(); \
+    static boolean contains(java.lang.String); \
+  }'
+}
+
