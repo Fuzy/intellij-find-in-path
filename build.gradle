@@ -36,6 +36,7 @@ ext {
     mainClassName = "com.fuzy.find.action.FindInPathChooseConfigAction"
     basename = "find-in-path-profile-idea-plugin"
     version = "1.0.0"
+    ideaICLib = '/home/fuzy/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib'
 }
 
 // Proguard doesn't have support for Java11
@@ -53,26 +54,36 @@ task obfuscate {
 
         def archivePath = jar.archiveFile.get().asFile.path
         ant.yguard {
-            inoutpair(in: archivePath, out: archivePath.replace(".jar", "_obf.jar"))
+            inoutpair(in: archivePath, out: archivePath.replace(".jar", "-obf.jar"))
 
             externalclasses {
-                pathelement(location: '/home/fuzy/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib/platform-api.jar')
-                pathelement(location: '/home/fuzy/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib/platform-impl.jar')
-                pathelement(location: '/home/fuzy/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib/util.jar')
-                pathelement(location: '/home/fuzy/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib/extensions.jar')
-                pathelement(location: '/home/fuzy/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib/platform-core-ui.jar')
+                pathelement(location: "${ideaICLib}/platform-api.jar")
+                pathelement(location: "${ideaICLib}/platform-impl.jar")
+                pathelement(location: "${ideaICLib}/util.jar")
+                pathelement(location: "${ideaICLib}/extensions.jar")
+                pathelement(location: "${ideaICLib}/platform-core-ui.jar")
             }
 
             shrink(logfile: "${buildDir}/yshrink.log.xml") {
                 keep {
-                    'class'(classes: 'public', methods: 'public')
+                    'class'(classes: 'public', methods: 'private')
+                }
+            }
+
+            rename(mainclass: mainClassName, logfile: "${buildDir}/yguard.log.xml") {
+                property(name: "error-checking", value: "pedantic")
+
+                keep {
+                    'class'(name: 'com.fuzy.find.persistence.ConfigurationManager')
+                    'class'(name: 'com.fuzy.find.listener.FindWindowManagerListener')
+                    'class'(name: 'com.fuzy.find.persistence.FindOption', methods: 'private', fields: 'private')
+                    'class'(name: 'com.fuzy.find.persistence.FindOptions', methods: 'private', fields: 'private')
+                     method(name: "com.fuzy.find.persistence.FindOptions getState()", 'class': 'com.fuzy.find.persistence.ConfigurationManager')
+                     method(name: "void loadState(com.fuzy.find.persistence.FindOptions)", 'class': 'com.fuzy.find.persistence.ConfigurationManager')
                 }
             }
 
         }
     }
 
-
 }
-
-
