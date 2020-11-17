@@ -21,7 +21,7 @@ import com.intellij.openapi.project.Project;
 import com.intellij.psi.search.SearchScope;
 
 @State(name = "FindInPathConfiguration", storages = @Storage("FindInPathConfiguration.xml"))
-public class ConfigurationManager implements PersistentStateComponent<FindOptions> {
+public final class ConfigurationManager implements PersistentStateComponent<FindOptions> {
 
     FindOptions findOptions;
 

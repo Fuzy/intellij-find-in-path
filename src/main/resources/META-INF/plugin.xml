@@ -1,16 +1,7 @@
 <idea-plugin require-restart="false">
     <id>com.fuzy.find.in.path</id>
     <name>Find In Path (Saved Configurations)</name>
-    <version>1.0</version>
     <vendor email="martinkadlecmarket@gmail.com" url="https://github.com/Fuzy">Fuzy</vendor>
-
-    <description><![CDATA[Find in path profile switcher, profile consists of path, scope, file mask]]></description>
-
-    <change-notes><![CDATA[Plugin initial release, I hope it will improve your productivity]]>
-    </change-notes>
-
-    <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/build_number_ranges.html for description -->
-    <idea-version since-build="201.0"/>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
@@ -20,7 +11,7 @@
     <extensions defaultExtensionNs="com.intellij">
         <!-- Add your extensions here -->
 
-        <!-- Declare the application level service -->
+        <!-- Declare the project level service -->
         <projectService serviceImplementation="com.fuzy.find.persistence.ConfigurationManager"/>
     </extensions>
 

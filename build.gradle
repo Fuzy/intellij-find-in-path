@@ -1,9 +1,7 @@
 buildscript {
     repositories {
         mavenCentral()
-    }
-    dependencies {
-        classpath 'net.sf.proguard:proguard-gradle:6.2.2'
+        mavenLocal()
     }
 }
 
@@ -18,11 +16,13 @@ version '1.0.0'
 sourceCompatibility = 11
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.13'
+    compile 'com.yworks:yguard:2.10.0'
 }
 
 apply plugin: 'org.jetbrains.intellij'
@@ -32,38 +32,47 @@ intellij {
     version '2020.2'
 }
 
-patchPluginXml {
-    changeNotes """
-      Add change notes here.<br>
-      <em>most HTML tags may be used</em>"""
-}
-
 ext {
     mainClassName = "com.fuzy.find.action.FindInPathChooseConfigAction"
     basename = "find-in-path-profile-idea-plugin"
     version = "1.0.0"
 }
 
-task obfuscate(type: proguard.gradle.ProGuardTask) {
-    injars "./build/libs/${basename}-${version}.jar"
-    outjars "./build/libs/${basename}-${version}-obf.jar"
+// Proguard doesn't have support for Java11
+task obfuscate {
+    dependsOn jar
+    group 'yGuard'
+    description 'Obfuscates and shrinks the java archive.'
 
-    libraryjars "${System.getProperty('java.home')}/lib/rt.jar"
+    doLast {
+        ant.taskdef(
+                name: 'yguard',
+                classname: 'com.yworks.yguard.YGuardTask',
+                classpath: sourceSets.main.runtimeClasspath.asPath
+        )
 
-    dontwarn
-    overloadaggressively
-    repackageclasses 'foo'
-    printmapping "./build/libs/${basename}.map"
+        def archivePath = jar.archiveFile.get().asFile.path
+        ant.yguard {
+            inoutpair(in: archivePath, out: archivePath.replace(".jar", "_obf.jar"))
 
-    keep 'class !foo.bar.buz**,!foo.bar.baz.** { *; }'
+            externalclasses {
+                pathelement(location: '/home/fuzy/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib/platform-api.jar')
+                pathelement(location: '/home/fuzy/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib/platform-impl.jar')
+                pathelement(location: '/home/fuzy/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib/util.jar')
+                pathelement(location: '/home/fuzy/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib/extensions.jar')
+                pathelement(location: '/home/fuzy/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib/platform-core-ui.jar')
+            }
 
-    keepclasseswithmembers "public class ${mainClassName} { \
-    public static void main(java.lang.String[]); \
-  }"
+            shrink(logfile: "${buildDir}/yshrink.log.xml") {
+                keep {
+                    'class'(classes: 'public', methods: 'public')
+                }
+            }
 
-    keepclassmembers allowshrinking: true, 'enum * { \
-    public static **[] values(); \
-    static boolean contains(java.lang.String); \
-  }'
+        }
+    }
+
+
 }
+
 
