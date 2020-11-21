@@ -1,7 +1,6 @@
 buildscript {
     repositories {
         mavenCentral()
-        mavenLocal()
     }
 }
 
@@ -16,7 +15,6 @@ version '1.0.0'
 sourceCompatibility = 11
 
 repositories {
-    mavenLocal()
     mavenCentral()
 }
 
@@ -30,6 +28,27 @@ apply plugin: 'org.jetbrains.intellij'
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
     version '2020.2'
+}
+
+/**
+ * Simple function to load HTML files and remove the surrounding `<html>` tags. This is useful for maintaining changes-notes
+ * and the description of plugins in separate HTML files which makes them much more readable.
+ */
+def htmlFixer = { filename ->
+    if (!file(filename).exists()) {
+        logger.error("File $filename not found.")
+    } else {
+        return file(filename).getText('UTF-8').replace("<html>", "").replace("</html>", "").trim()
+    }
+    return ""
+}
+
+def changeNotesHtml = htmlFixer("src/main/resources/META-INF/change-notes.html")
+def pluginDescriptionHtml = htmlFixer("src/main/resources/META-INF/description.html")
+
+patchPluginXml {
+    changeNotes "${changeNotesHtml}"
+    pluginDescription "${pluginDescriptionHtml}"
 }
 
 ext {
@@ -78,8 +97,8 @@ task obfuscate {
                     'class'(name: 'com.fuzy.find.listener.FindWindowManagerListener')
                     'class'(name: 'com.fuzy.find.persistence.FindOption', methods: 'private', fields: 'private')
                     'class'(name: 'com.fuzy.find.persistence.FindOptions', methods: 'private', fields: 'private')
-                     method(name: "com.fuzy.find.persistence.FindOptions getState()", 'class': 'com.fuzy.find.persistence.ConfigurationManager')
-                     method(name: "void loadState(com.fuzy.find.persistence.FindOptions)", 'class': 'com.fuzy.find.persistence.ConfigurationManager')
+                    method(name: "com.fuzy.find.persistence.FindOptions getState()", 'class': 'com.fuzy.find.persistence.ConfigurationManager')
+                    method(name: "void loadState(com.fuzy.find.persistence.FindOptions)", 'class': 'com.fuzy.find.persistence.ConfigurationManager')
                 }
             }
 

@@ -1,6 +1,6 @@
 <idea-plugin require-restart="false">
     <id>com.fuzy.find.in.path</id>
-    <name>Find In Path (Saved Configurations)</name>
+    <name>Find In Path (Configurations)</name>
     <vendor email="martinkadlecmarket@gmail.com" url="https://github.com/Fuzy">Fuzy</vendor>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
