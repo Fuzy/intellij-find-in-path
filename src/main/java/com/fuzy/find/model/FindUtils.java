@@ -16,6 +16,7 @@ import com.fuzy.find.action.FindInPathProfileAction;
 import com.fuzy.find.persistence.ConfigurationManager;
 import com.fuzy.find.persistence.FindOption;
 import com.fuzy.find.persistence.FindOptions;
+import com.fuzy.find.util.StringUtils;
 import com.intellij.find.FindModel;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.project.Project;
@@ -67,7 +68,9 @@ public class FindUtils {
 
             List<FindOption> options = state.getOptions();
 
-            Predicate<FindOption> filterByNameUuid = (o) -> o.getName() != null && !LAST_USED.equals(o.getUuid());
+            Predicate<FindOption> filterByNameUuid = (o) -> StringUtils.trimToNull(o.getName()) != null
+                    && !LAST_USED.equals(o.getUuid());
+
             return options.stream().filter(filterByNameUuid)
                     .map(o -> {
                         String name = FindInPathChooseConfigAction.emphasiseMnemonic(o.getName(), usedMnemonics);
