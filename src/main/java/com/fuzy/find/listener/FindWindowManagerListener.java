@@ -67,14 +67,14 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
                 content);
 
         List<String> names = collectNames();
-        AnAction saveAction = createSaveAction(currentFindModel, createValidator(names));
+        AnAction saveAction = createSaveAction(currentFindModel, createValidator(names), project);
 
         NOTIFICATION_GROUP.createNotification(question, NotificationType.INFORMATION)
                 .addAction(saveAction).notify(project);
     }
 
     @NotNull
-    private AnAction createSaveAction(FindModel currentFindModel, InputValidator validator) {
+    private AnAction createSaveAction(final FindModel currentFindModel, final InputValidator validator, final Project project) {
         return new AnAction("Save") {
 
             @Override
@@ -86,6 +86,11 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
                     saveFindOption(currentFindModel, name);
                 }
 
+            }
+
+            private void saveFindOption(FindModel findModel, String name) {
+                ConfigurationManager cm = ConfigurationManager.getInstance(project);
+                cm.save(findModel, name);
             }
         };
     }
@@ -102,11 +107,6 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
                 return !names.contains(inputString);
             }
         };
-    }
-
-    private void saveFindOption(FindModel findModel, String name) {
-        ConfigurationManager cm = ConfigurationManager.getInstance(project);
-        cm.save(findModel, name);
     }
 
     private boolean existsPersistentOption(FindModel findModel) {
