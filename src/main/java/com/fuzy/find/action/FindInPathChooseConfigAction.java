@@ -122,18 +122,18 @@ public class FindInPathChooseConfigAction extends AnAction implements DumbAware 
                 askForSaveOptions(findInPathProfileAction, uuid, project);
             }
 
+            private void askForSaveOptions(FindInPathProfileAction findInPathProfileAction, String uuid, Project project) {
+                String name = findInPathProfileAction.getName();
+                String question = MessageFormat.format("Delete search options named  {0}?", name);
+
+                int i = Messages.showYesNoCancelDialog(question, "Delete Options", null);
+                if (Messages.YES == i) {
+                    ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
+                    configurationManager.delete(uuid);
+                }
+            }
+
         };
-    }
-
-    private void askForSaveOptions(FindInPathProfileAction findInPathProfileAction, String uuid, Project project) {
-        String name = findInPathProfileAction.getName();
-        String question = MessageFormat.format("Delete search options named  {0}?", name);
-
-        int i = Messages.showYesNoCancelDialog(question, "Delete Options", null);
-        if (Messages.YES == i) {
-            ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
-            configurationManager.delete(uuid);
-        }
     }
 
     public static String emphasiseMnemonic(String caption, Set<? super Character> usedMnemonics) {
