@@ -122,8 +122,13 @@ public final class ConfigurationManager implements PersistentStateComponent<Find
     }
 
     public void delete(String uuid) {
-        FindOption byUuid = findByUuid(uuid);
-        findOptions.getOptions().remove(byUuid);
+        FindOptions findOptions = getState();
+        if (findOptions == null) {
+            return;
+        }
+
+        Predicate<FindOption> isUuid = f -> uuid.equals(f.getUuid());
+        findOptions.getOptions().removeIf(isUuid);
     }
 
     public FindOption findByUuid(String uuid) {
