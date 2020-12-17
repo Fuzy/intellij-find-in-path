@@ -6,7 +6,7 @@ buildscript {
 
 plugins {
     id 'java'
-    id 'org.jetbrains.intellij' version '0.4.21'
+    id "org.jetbrains.intellij" version "0.6.5"
 }
 
 group 'com.fuzy.idea'
@@ -27,7 +27,7 @@ apply plugin: 'org.jetbrains.intellij'
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2020.2'
+    version '2020.3'
 }
 
 /**
@@ -103,6 +103,10 @@ task obfuscate {
             }
 
         }
+    }
+
+    runPluginVerifier {
+        ideVersions('2020.3')
     }
 
 }
