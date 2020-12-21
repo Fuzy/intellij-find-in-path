@@ -1,5 +1,6 @@
 package com.fuzy.find.model;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -57,7 +58,7 @@ public class FindUtils {
 
     private void sortAlphabetically(List<FindInPathProfileAction> actions) {
         actions.sort(Comparator.comparing(FindInPathProfileAction::getName,
-                Comparator.nullsLast(Comparator.naturalOrder())));
+                Comparator.nullsLast(Collator.getInstance())));
     }
 
     private List<FindInPathProfileAction> initUserActionsOfPersistentState(Project project, Set<Character> usedMnemonics) {

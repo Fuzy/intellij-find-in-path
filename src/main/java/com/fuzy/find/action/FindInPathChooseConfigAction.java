@@ -143,6 +143,11 @@ public class FindInPathChooseConfigAction extends AnAction implements DumbAware 
 
         for (int i = 0; i < caption.length(); i++) {
             char c = caption.charAt(i);
+
+            if (Character.isWhitespace(c)) {
+                continue;
+            }
+
             if (usedMnemonics.add(Character.toUpperCase(c))) {
                 return UIUtil.MNEMONIC + String.valueOf(c) + ". " + caption;
             }
