@@ -76,7 +76,7 @@ public class FindInPathChooseConfigAction extends AnAction implements DumbAware 
         ListPopup popup = JBPopupFactory.getInstance().createActionGroupPopup(TITLE, group, context,
                 JBPopupFactory.ActionSelectionAid.MNEMONICS, true);
         registerDeleteAction(project, popup);
-        popup.showInFocusCenter();
+        popup.showCenteredInCurrentWindow(project);
     }
 
     private void registerDeleteAction(Project project, ListPopup popup) {

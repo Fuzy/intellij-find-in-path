@@ -63,7 +63,7 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
         // if not saved profile, it will save to prevent unwanted prompt to save
         saveAsLastUsed(currentFindModel);
 
-        String question = MessageFormat.format("Do you want to save search options used in search for {0}?",
+        String question = MessageFormat.format("Do you want to save search configuration used in search for {0}?",
                 content);
 
         List<String> names = collectNames();
@@ -79,9 +79,9 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
 
             @Override
             public void actionPerformed(@NotNull AnActionEvent e) {
-                String msg = "Save search options as";
+                String msg = "Save search configuration as";
                 String name = StringUtils.trimToNull(Messages.showInputDialog(project, msg,
-                        "Save Options", null, null, validator));
+                        "Save Configuration", null, null, validator));
                 if (name != null) {
                     saveFindOption(currentFindModel, name);
                 }

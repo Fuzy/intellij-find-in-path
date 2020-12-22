@@ -47,7 +47,7 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
 
         FindModel model = new FindUtils().modelForUuid(uuid, project);
         if (model == null) {
-            String msg = "Persistent state of options not found in FindInPathConfiguration.xml";
+            String msg = "Persistent state of configurations not found in FindInPathConfiguration.xml";
             Notifications.notifyError(msg, project);
             return;
         }
