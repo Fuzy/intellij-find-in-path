@@ -124,9 +124,9 @@ public class FindInPathChooseConfigAction extends AnAction implements DumbAware 
 
             private void askForSaveOptions(FindInPathProfileAction findInPathProfileAction, String uuid, Project project) {
                 String name = findInPathProfileAction.getName();
-                String question = MessageFormat.format("Delete search options named  {0}?", name);
+                String question = MessageFormat.format("Delete search configuration named  {0}?", name);
 
-                int i = Messages.showYesNoCancelDialog(question, "Delete Options", null);
+                int i = Messages.showYesNoCancelDialog(question, "Delete Configuration", null);
                 if (Messages.YES == i) {
                     ConfigurationManager configurationManager = ConfigurationManager.getInstance(project);
                     configurationManager.delete(uuid);
