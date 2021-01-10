@@ -53,9 +53,6 @@ patchPluginXml {
 
 ext {
     mainClassName = "com.fuzy.find.action.FindInPathChooseConfigAction"
-    basename = "find-in-path-profile-idea-plugin"
-    version = "1.0.0"
-    ideaICLib = '/home/fuzy/.gradle/caches/modules-2/files-2.1/com.jetbrains.intellij.idea/ideaIC/2020.2/4fe93bb81525f2fa7a6f0fd7ba41c3b9cce9e8b6/ideaIC-2020.2/lib'
 }
 
 // Proguard doesn't have support for Java11
@@ -75,12 +72,8 @@ task obfuscate {
         ant.yguard {
             inoutpair(in: archivePath, out: archivePath.replace(".jar", "-obf.jar"))
 
-            externalclasses {
-                pathelement(location: "${ideaICLib}/platform-api.jar")
-                pathelement(location: "${ideaICLib}/platform-impl.jar")
-                pathelement(location: "${ideaICLib}/util.jar")
-                pathelement(location: "${ideaICLib}/extensions.jar")
-                pathelement(location: "${ideaICLib}/platform-core-ui.jar")
+            externalClasses {
+                pathelement(path: "${sourceSets.main.compileClasspath.asPath}")
             }
 
             shrink(logfile: "${buildDir}/yshrink.log.xml") {
