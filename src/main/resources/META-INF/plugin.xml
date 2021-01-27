@@ -1,7 +1,9 @@
 <idea-plugin require-restart="false">
     <id>com.fuzy.find.in.path</id>
-    <name>Find In Path (Configurations)</name>
+    <name>Find In Files (Configurations)</name>
     <vendor email="martinkadlecmarket@gmail.com" url="https://github.com/Fuzy">Fuzy</vendor>
+    
+    <product-descriptor code="PFUZYFIPC" release-date="20210127" release-version="20203"/>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->
@@ -18,7 +20,7 @@
     <actions>
         <!-- Add your actions here -->
         <action id="fuzy.FindInPath" class="com.fuzy.find.action.FindInPathChooseConfigAction"
-                text="Find in Path (Configurations)" description="Find in Path (shows configurations popup)">
+                text="Find in Files (Configurations)" description="Find in Files (shows configurations popup)">
             <add-to-group group-id="FindMenuGroup" anchor="after" relative-to-action="FindInPath"/>
             <keyboard-shortcut first-keystroke="control shift alt F" keymap="$default"/>
         </action>

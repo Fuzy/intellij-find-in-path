@@ -19,7 +19,7 @@ public class Notifications {
 
     public static final NotificationGroup NOTIFICATION_GROUP =
             new NotificationGroup(DISPLAY_ID, NotificationDisplayType.BALLOON,
-                    true, ToolWindowId.FIND, null, "Find in Path (conf)",
+                    true, ToolWindowId.FIND, null, "Find in Files (conf)",
                     PluginId.getId(PLUGIN_ID));
 
     public static void notifyError(String msg, Project project) {

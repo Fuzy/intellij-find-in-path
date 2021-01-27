@@ -26,7 +26,7 @@ import static com.fuzy.find.notification.Notifications.NOTIFICATION_GROUP;
  * After Find window is showed, it will evaluate whether to ask to save/update/delete settings.
  * <p>
  * Possible candidate for intercept find event is com.intellij.find.FindManager#FIND_MODEL_TOPIC
- * but is not fired at Find in Path dialog.
+ * but is not fired at Find in Files dialog.
  */
 public class FindWindowManagerListener implements ToolWindowManagerListener {
     private final Project project;

@@ -78,7 +78,7 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
     }
 
     private void showNotAvailableMessage(Project project) {
-        final String message = "'Find in path' is not available while search is in progress";
+        final String message = "'Find in Files' is not available while search is in progress";
         Notifications.notifyWarning(message, project);
     }
 
