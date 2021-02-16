@@ -19,8 +19,8 @@ repositories {
 }
 
 dependencies {
-    testCompile group: 'junit', name: 'junit', version: '4.13'
-    compile 'com.yworks:yguard:2.10.0'
+    testImplementation group: 'junit', name: 'junit', version: '4.13'
+    implementation 'com.yworks:yguard:2.10.0'
 }
 
 apply plugin: 'org.jetbrains.intellij'
