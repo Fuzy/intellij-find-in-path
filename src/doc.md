@@ -14,4 +14,8 @@ Dokumentace
 - apng navod ze screenshotu
 - ukladane hodnoty
 - kde je ulozeno nastaveni
-- preddefinovane profily 
+- preddefinovane profily
+
+Marketplace
+CZ52 0800 0000 0018 7207 7173
+GIBACZPX

@@ -10,7 +10,7 @@ plugins {
 }
 
 group 'com.fuzy.idea'
-version '1.0.2'
+version '1.0.3'
 
 sourceCompatibility = 11
 
@@ -53,6 +53,10 @@ patchPluginXml {
 
 ext {
     mainClassName = "com.fuzy.find.action.FindInPathChooseConfigAction"
+}
+
+tasks.buildSearchableOptions {
+    enabled = false
 }
 
 // Proguard doesn't have support for Java11

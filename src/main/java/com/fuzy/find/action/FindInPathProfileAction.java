@@ -5,6 +5,7 @@ import javax.swing.SwingUtilities;
 
 import org.jetbrains.annotations.NotNull;
 
+import com.fuzy.find.license.CheckLicense;
 import com.fuzy.find.model.FindUtils;
 import com.fuzy.find.notification.Notifications;
 import com.fuzy.find.persistence.ConfigurationManager;
@@ -42,6 +43,8 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
             LOG.warn("Project is null.");
             return;
         }
+
+        CheckLicense.isLicensed();
 
         DataContext dataContext = e.getDataContext();
 
