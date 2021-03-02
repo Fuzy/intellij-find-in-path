@@ -4,6 +4,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.List;
 
+import com.intellij.notification.NotificationGroupManager;
 import org.jetbrains.annotations.NotNull;
 
 import com.fuzy.find.persistence.ConfigurationManager;
@@ -20,7 +21,7 @@ import com.intellij.openapi.wm.ToolWindowId;
 import com.intellij.openapi.wm.ToolWindowManager;
 import com.intellij.openapi.wm.ex.ToolWindowManagerListener;
 
-import static com.fuzy.find.notification.Notifications.NOTIFICATION_GROUP;
+import static com.fuzy.find.notification.Notifications.PLUGIN_ID;
 
 /**
  * After Find window is showed, it will evaluate whether to ask to save/update/delete settings.
@@ -69,7 +70,7 @@ public class FindWindowManagerListener implements ToolWindowManagerListener {
         List<String> names = collectNames();
         AnAction saveAction = createSaveAction(currentFindModel, createValidator(names), project);
 
-        NOTIFICATION_GROUP.createNotification(question, NotificationType.INFORMATION)
+        NotificationGroupManager.getInstance().getNotificationGroup(PLUGIN_ID).createNotification(question, NotificationType.INFORMATION)
                 .addAction(saveAction).notify(project);
     }
 

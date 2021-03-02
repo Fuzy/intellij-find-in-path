@@ -32,4 +32,8 @@
                   topic="com.intellij.openapi.wm.ex.ToolWindowManagerListener"/>
     </projectListeners>
 
+    <extensions defaultExtensionNs="com.intellij">
+        <notificationGroup id="com.fuzy.find.in.path" displayType="BALLOON" key="com.fuzy.find.in.path"/>
+    </extensions>
+
 </idea-plugin>
