@@ -37,7 +37,7 @@ import com.intellij.util.ui.UIUtil;
  * Shows dialog for selection of predefined and persisted configurations.
  */
 public class FindInPathChooseConfigAction extends AnAction implements DumbAware {
-    private static final Logger LOG = Logger.getInstance(FindInPathChooseConfigAction.class);
+    protected static final Logger LOG = Logger.getInstance(FindInPathChooseConfigAction.class);
 
     public static final String TITLE = "Choose Configuration";
 

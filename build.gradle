@@ -10,7 +10,7 @@ plugins {
 }
 
 group 'com.fuzy.idea'
-version '1.0.4'
+version '1.0.5'
 
 sourceCompatibility = 11
 
@@ -96,14 +96,18 @@ task obfuscate {
                     'class'(name: 'com.fuzy.find.persistence.FindOptions', methods: 'private', fields: 'private')
                     method(name: "com.fuzy.find.persistence.FindOptions getState()", 'class': 'com.fuzy.find.persistence.ConfigurationManager')
                     method(name: "void loadState(com.fuzy.find.persistence.FindOptions)", 'class': 'com.fuzy.find.persistence.ConfigurationManager')
+                    field(name: 'LOG', 'class': 'com.fuzy.find.action.FindInPathChooseConfigAction')
                 }
             }
 
         }
     }
 
-    runPluginVerifier {
-        ideVersions('2020.3')
-    }
+}
 
+jar.finalizedBy(project.tasks.obfuscate)
+
+runPluginVerifier {
+    distributionFile jar.archiveFile.get().asFile.path.replace(".jar", "-obf.jar")
+    ideVersions(['IU-2020.3.1', 'IC-2020.3.1'])
 }
