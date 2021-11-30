@@ -37,7 +37,7 @@ public class FindUtils {
         String emptyName = FindInPathChooseConfigAction.emphasiseMnemonic(EMPTY_NAME, usedMnemonics);
         actions.add(new FindInPathProfileAction(EMPTY, EMPTY_NAME, emptyName));
 
-        ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
+        ConfigurationManager manager = project.getService(ConfigurationManager.class);
         FindOption byUuid = manager.findByUuid(LAST_USED);
         if (byUuid == null) {
             return actions;
@@ -62,7 +62,7 @@ public class FindUtils {
     }
 
     private List<FindInPathProfileAction> initUserActionsOfPersistentState(Project project, Set<Character> usedMnemonics) {
-        ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
+        ConfigurationManager manager = project.getService(ConfigurationManager.class);
         FindOptions state = manager.getState();
 
         if (state != null) {
@@ -89,7 +89,7 @@ public class FindUtils {
             return createEmpty();
         }
 
-        ConfigurationManager manager = ServiceManager.getService(project, ConfigurationManager.class);
+        ConfigurationManager manager = project.getService(ConfigurationManager.class);
         FindOption byUuid = manager.findByUuid(uuid);
         if (byUuid == null) {
             return null;

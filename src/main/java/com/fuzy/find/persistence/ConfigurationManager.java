@@ -40,7 +40,7 @@ public final class ConfigurationManager implements PersistentStateComponent<Find
     }
 
     public static ConfigurationManager getInstance(Project project) {
-        return ServiceManager.getService(project, ConfigurationManager.class);
+        return project.getService(ConfigurationManager.class);
     }
 
     public void saveAsLastUsed(FindModel findModel) {
