@@ -50,7 +50,7 @@ patchPluginXml {
     changeNotes "${changeNotesHtml}"
     pluginDescription "${pluginDescriptionHtml}"
     sinceBuild '203.*'
-    untilBuild '212.*'
+    untilBuild '213.*'
 }
 
 ext {
