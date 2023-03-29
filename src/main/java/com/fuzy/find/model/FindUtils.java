@@ -150,9 +150,9 @@ public class FindUtils {
         //NamedScopeManager.getInstance(project); workspace.xml
         String scopeName = findOption.getScope();
         if (scopeName != null) {
-            List<SearchScope> predefined = PredefinedSearchScopeProvider.getInstance().getPredefinedScopes(
+            List<? extends SearchScope> predefined = PredefinedSearchScopeProvider.getInstance().getPredefinedScopes(
                     project, null, true, false, false, false, false);
-            Optional<SearchScope> first = predefined.stream().filter(scope -> scope.getDisplayName().equals(scopeName)).findFirst();
+            Optional<? extends SearchScope> first = predefined.stream().filter(scope -> scope.getDisplayName().equals(scopeName)).findFirst();
             first.ifPresent(model::setCustomScope);
         }
 

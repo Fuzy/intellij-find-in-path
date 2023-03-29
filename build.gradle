@@ -10,7 +10,7 @@ plugins {
 }
 
 group 'com.fuzy.idea'
-version '1.0.12'
+version '1.0.13'
 
 sourceCompatibility = 17
 
@@ -27,7 +27,7 @@ apply plugin: 'org.jetbrains.intellij'
 
 // See https://github.com/JetBrains/gradle-intellij-plugin/
 intellij {
-    version '2022.3'
+    version '2023.1'
 }
 
 /**
@@ -50,7 +50,7 @@ patchPluginXml {
     changeNotes "${changeNotesHtml}"
     pluginDescription "${pluginDescriptionHtml}"
     sinceBuild '203.*'
-    untilBuild '223.*'
+    untilBuild '231.*'
 }
 
 ext {
@@ -111,7 +111,7 @@ jar.finalizedBy(project.tasks.obfuscate)
 
 runPluginVerifier {
     distributionFile jar.archiveFile.get().asFile.path.replace(".jar", "-obf.jar")
-    ideVersions(['IU-2022.3', 'IC-2022.3'])
+    ideVersions(['IU-2023.1', 'IC-2023.1'])
 }
 
 test {
