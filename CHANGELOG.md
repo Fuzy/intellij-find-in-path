@@ -6,7 +6,7 @@
 ### Added
 - Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
 
-## [1.0.16]
+## [2024.2.1]
 ### Fixed
 - Compatibility with 2024.2
 
