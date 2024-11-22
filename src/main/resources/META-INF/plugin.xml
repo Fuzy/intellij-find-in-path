@@ -3,7 +3,7 @@
     <name>Find In Files (Favorites)</name>
     <vendor email="martinkadlecmarket@gmail.com" url="https://github.com/Fuzy">Fuzy</vendor>
     
-    <product-descriptor code="PFUZYFIPC" release-date="20241009" release-version="20242"/>
+    <product-descriptor code="PFUZYFIPC" release-date="20241122" release-version="20243"/>
 
     <!-- please see http://www.jetbrains.org/intellij/sdk/docs/basics/getting_started/plugin_compatibility.html
          on how to target different products -->

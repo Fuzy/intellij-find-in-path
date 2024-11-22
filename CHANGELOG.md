@@ -2,9 +2,9 @@
 
 # Find In Files (Favorites) Changelog
 
-## [Unreleased]
-### Added
-- Initial scaffold created from [IntelliJ Platform Plugin Template](https://github.com/JetBrains/intellij-platform-plugin-template)
+## [2024.3.0]
+### Updated
+- Compatibility with 2024.3
 
 ## [2024.2.1]
 ### Fixed
