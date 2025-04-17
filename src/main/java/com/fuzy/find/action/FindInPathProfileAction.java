@@ -3,6 +3,8 @@ package com.fuzy.find.action;
 
 import javax.swing.SwingUtilities;
 
+import com.intellij.openapi.application.ReadAction;
+import com.intellij.openapi.util.ThrowableComputable;
 import org.jetbrains.annotations.NotNull;
 
 import com.fuzy.find.license.CheckLicense;
@@ -70,7 +72,10 @@ public class FindInPathProfileAction extends AnAction implements DumbAware {
 
         // Dropdown must contain this option
         FindSettings.getInstance().setFileMask(model.getFileFilter());
-        FindInProjectUtil.initStringToFindFromDataContext(model, dataContext);
+        ReadAction.compute(() -> (ThrowableComputable<Void, RuntimeException>) () -> {
+            FindInProjectUtil.initStringToFindFromDataContext(model, dataContext);
+            return null;
+        });
 
         findManager.findInProject(dataContext, model);
     }
