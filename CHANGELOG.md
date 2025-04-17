@@ -2,6 +2,10 @@
 
 # Find In Files (Favorites) Changelog
 
+## [2025.1.0]
+### Updated
+- Compatibility with 2025.1
+
 ## [2024.3.0]
 ### Updated
 - Compatibility with 2024.3
